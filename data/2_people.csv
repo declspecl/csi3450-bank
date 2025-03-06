@@ -1,0 +1,11 @@
+person_id,first_name,last_name,birthday,email,phone_number,address,ssn,credit_score
+1,"John","Smith","1985-03-15","john.smith@email.com","(555) 123-4567","123 Main St, Anytown, NY 10001","123-45-6789",720
+2,"Sarah","Johnson","1990-07-22","sarah.j@email.com","(555) 234-5678","456 Oak Ave, Somecity, CA 90210","234-56-7890",680
+3,"Michael","Williams","1978-11-30","mike.w@email.com","(555) 345-6789","789 Pine Rd, Otherville, IL 60007","345-67-8901",750
+4,"Emily","Brown","1992-05-10","emily.b@email.com","(555) 456-7890","101 Maple Dr, Somewhere, FL 33101","456-78-9012",790
+5,"David","Jones","1982-09-18","david.j@email.com","(555) 567-8901","202 Elm St, Anyplace, MA 02108","567-89-0123",640
+6,"Jennifer","Garcia","1995-01-25","jen.g@email.com","(555) 678-9012","303 Birch Ln, Somewhere, PA 19019","678-90-1234",710
+7,"Robert","Miller","1970-12-03","rob.m@email.com","(555) 789-0123","404 Cedar Ct, Anytown, DC 20001","789-01-2345",820
+8,"Lisa","Davis","1988-06-20","lisa.d@email.com","(555) 890-1234","505 Spruce Way, Somecity, MN 55401","890-12-3456",730
+9,"James","Rodriguez","1993-04-05","james.r@email.com","(555) 901-2345","606 Willow Ave, Otherville, GA 30301","901-23-4567",690
+10,"Michelle","Wilson","1980-08-12","michelle.w@email.com","(555) 012-3456","707 Aspen Blvd, Anywhere, OH 45201","012-34-5678",770

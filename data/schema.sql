@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     status TEXT NOT NULL,
     fk_sender_id INTEGER NOT NULL REFERENCES accounts(account_id),
     fk_recipient_id INTEGER NOT NULL REFERENCES accounts(account_id),
-    CONSTRAINT sender_not_recipient CHECK (fk_sender_id <> fk_sender_id)
+    CONSTRAINT sender_not_recipient CHECK (fk_sender_id <> fk_recipient_id)
 );
 
 CREATE TABLE IF NOT EXISTS loans (
