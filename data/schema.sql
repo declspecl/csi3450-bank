@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS people (
     email TEXT NOT NULL,
     phone_number CHAR(14) NOT NULL,
     address TEXT NOT NULL,
-    ssn CHAR(11) NOT NULL
+    ssn CHAR(11) NOT NULL,
+    credit_score INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS accounts (
