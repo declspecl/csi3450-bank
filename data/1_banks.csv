@@ -1,3 +1,4 @@
+bank_id,name,routing_number,location,phone_number
 1,Chase Bank,123456789,"New York, NY",(212) 555-1234
 2,Bank of America,987654321,"Los Angeles, CA",(310) 555-5678
 3,Wells Fargo,456789123,"Chicago, IL",(312) 555-9012

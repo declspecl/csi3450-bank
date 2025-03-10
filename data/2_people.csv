@@ -1,3 +1,4 @@
+person_id,first_name,last_name,birthday,email,phone_number,address,ssn,credit_score
 1,John,Smith,1985-03-15,john.smith@email.com,(555) 123-4567,"123 Main St, Anytown, NY 10001",123-45-6789,720
 2,Sarah,Johnson,1990-07-22,sarah.j@email.com,(555) 234-5678,"456 Oak Ave, Somecity, CA 90210",234-56-7890,680
 3,Michael,Williams,1978-11-30,mike.w@email.com,(555) 345-6789,"789 Pine Rd, Otherville, IL 60007",345-67-8901,750
