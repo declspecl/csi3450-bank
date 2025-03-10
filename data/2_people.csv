@@ -1,11 +1,20 @@
-person_id,first_name,last_name,birthday,email,phone_number,address,ssn,credit_score
-1,"John","Smith","1985-03-15","john.smith@email.com","(555) 123-4567","123 Main St, Anytown, NY 10001","123-45-6789",720
-2,"Sarah","Johnson","1990-07-22","sarah.j@email.com","(555) 234-5678","456 Oak Ave, Somecity, CA 90210","234-56-7890",680
-3,"Michael","Williams","1978-11-30","mike.w@email.com","(555) 345-6789","789 Pine Rd, Otherville, IL 60007","345-67-8901",750
-4,"Emily","Brown","1992-05-10","emily.b@email.com","(555) 456-7890","101 Maple Dr, Somewhere, FL 33101","456-78-9012",790
-5,"David","Jones","1982-09-18","david.j@email.com","(555) 567-8901","202 Elm St, Anyplace, MA 02108","567-89-0123",640
-6,"Jennifer","Garcia","1995-01-25","jen.g@email.com","(555) 678-9012","303 Birch Ln, Somewhere, PA 19019","678-90-1234",710
-7,"Robert","Miller","1970-12-03","rob.m@email.com","(555) 789-0123","404 Cedar Ct, Anytown, DC 20001","789-01-2345",820
-8,"Lisa","Davis","1988-06-20","lisa.d@email.com","(555) 890-1234","505 Spruce Way, Somecity, MN 55401","890-12-3456",730
-9,"James","Rodriguez","1993-04-05","james.r@email.com","(555) 901-2345","606 Willow Ave, Otherville, GA 30301","901-23-4567",690
-10,"Michelle","Wilson","1980-08-12","michelle.w@email.com","(555) 012-3456","707 Aspen Blvd, Anywhere, OH 45201","012-34-5678",770
+1,John,Smith,1985-03-15,john.smith@email.com,(555) 123-4567,"123 Main St, Anytown, NY 10001",123-45-6789,720
+2,Sarah,Johnson,1990-07-22,sarah.j@email.com,(555) 234-5678,"456 Oak Ave, Somecity, CA 90210",234-56-7890,680
+3,Michael,Williams,1978-11-30,mike.w@email.com,(555) 345-6789,"789 Pine Rd, Otherville, IL 60007",345-67-8901,750
+4,Emily,Brown,1992-05-10,emily.b@email.com,(555) 456-7890,"101 Maple Dr, Somewhere, FL 33101",456-78-9012,790
+5,David,Jones,1982-09-18,david.j@email.com,(555) 567-8901,"202 Elm St, Anyplace, MA 02108",567-89-0123,640
+6,Jennifer,Garcia,1995-01-25,jen.g@email.com,(555) 678-9012,"303 Birch Ln, Somewhere, PA 19019",678-90-1234,710
+7,Robert,Miller,1970-12-03,rob.m@email.com,(555) 789-0123,"404 Cedar Ct, Anytown, DC 20001",789-01-2345,820
+8,Lisa,Davis,1988-06-20,lisa.d@email.com,(555) 890-1234,"505 Spruce Way, Somecity, MN 55401",890-12-3456,730
+9,James,Rodriguez,1993-04-05,james.r@email.com,(555) 901-2345,"606 Willow Ave, Otherville, GA 30301",901-23-4567,690
+10,Michelle,Wilson,1980-08-12,michelle.w@email.com,(555) 012-3456,"707 Aspen Blvd, Anywhere, OH 45201",012-34-5678,770
+11,Alex,Mercury,1993-06-21,alex.mercury@email.com,(555) 123-9911,"18 Orbit St, Houston, TX 77001",111-22-3333,750
+12,Blake,Quantum,1988-04-11,blake.q@email.com,(555) 321-4455,"501 Cyber Rd, Palo Alto, CA 94301",222-33-4444,820
+13,Charlie,Falcon,1995-09-30,charlie.f@email.com,(555) 789-2234,"707 Aviation Ln, Orlando, FL 32819",333-44-5555,690
+14,Devon,Cipher,1987-11-18,devon.cipher@email.com,(555) 567-8890,"999 Hacker Way, San Jose, CA 95131",444-55-6666,720
+15,Evelyn,Summit,1991-07-07,evelyn.s@email.com,(555) 678-9988,"321 Everest Dr, Denver, CO 80202",555-66-7777,740
+16,Felix,Noir,1990-12-25,felix.noir@email.com,(555) 222-1111,"404 Mystery Ave, Chicago, IL 60616",666-77-8888,710
+17,Giselle,Nova,1985-03-15,giselle.n@email.com,(555) 909-1122,"515 Stardust Blvd, Los Angeles, CA 90001",777-88-9999,760
+18,Hudson,Striker,1996-08-19,hudson.s@email.com,(555) 676-5555,"303 Battle Rd, Austin, TX 73301",888-99-0000,690
+19,Ivy,Echo,1994-02-14,ivy.e@email.com,(555) 121-7676,"222 Silent St, Seattle, WA 98101",999-00-1111,780
+20,Jason,Apex,1989-05-22,jason.a@email.com,(555) 454-3232,"800 Summit Rd, Phoenix, AZ 85001",123-12-4567,810
