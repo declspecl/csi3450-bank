@@ -10,4 +10,4 @@ To run the scripts in the intended manner, run the following commands in a termi
 ## How to run the app
 
 1. In a terminal, run on Mac/Linux: `source ./.venv/bin/activate` or on Windows: `.\.venv\Scripts\Activate.bat`
-2. `python -m flask --app src/main.py run`
+2. `python src/main.py`
