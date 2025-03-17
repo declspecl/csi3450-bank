@@ -50,6 +50,74 @@ document.body.appendChild(reviewingText);
 reviewingText.style.textAlign = "center";
 reviewingText.style.textShadow = "2px 2px 4px black"; 
 
+// Create a menu button
+const menuButton = document.createElement("button");
+menuButton.innerHTML = "&#9776;"; 
+menuButton.style.position = "fixed";
+menuButton.style.top = "10px";
+menuButton.style.left = "10px";
+menuButton.style.background = "gold";
+menuButton.style.color = "black";
+menuButton.style.border = "none";
+menuButton.style.padding = "10px";
+menuButton.style.fontSize = "24px";
+menuButton.style.cursor = "pointer";
+menuButton.style.zIndex = "1000";
+document.body.appendChild(menuButton);
+
+// Create a sidebar container
+const sidebar = document.createElement("div");
+sidebar.style.position = "fixed";
+sidebar.style.left = "-220px"; // Initially hidden
+sidebar.style.top = "0";
+sidebar.style.width = "200px";
+sidebar.style.height = "100vh";
+sidebar.style.background = "#333";
+sidebar.style.padding = "80px 10px 10px"; // Add top padding to avoid overlap
+sidebar.style.display = "flex";
+sidebar.style.flexDirection = "column";
+sidebar.style.alignItems = "center";
+sidebar.style.boxShadow = "2px 0 5px rgba(0,0,0,0.5)";
+sidebar.style.transition = "left 0.3s ease";
+document.body.appendChild(sidebar);
+
+// Toggle sidebar visibility
+menuButton.addEventListener("click", () => {
+    if (sidebar.style.left === "0px") {
+        sidebar.style.left = "-220px";
+    } else {
+        sidebar.style.left = "0px";
+    }
+});
+
+const tableNames = [
+    {name :"Accounts", url : "accounts.html"},
+    {name :"Banks", url : "banks.html"},
+    {name :"Loans", url : "loans.html"},
+    {name :"People", url : "people.html"},
+    {name :"Transactions", url : "transactions.html"}];
+
+// Function to create sidebar buttons
+function createSidebarButton(name) {
+    const button = document.createElement("button");
+    button.textContent = name;
+    button.style.width = "100%";
+    button.style.margin = "10px 0"; // Increase margin for better spacing
+    button.style.padding = "10px";
+    button.style.background = "gold";
+    button.style.color = "black";
+    button.style.border = "none";
+    button.style.cursor = "pointer";
+    button.style.fontWeight = "bold";
+    
+    
+    sidebar.appendChild(button);
+}
+
+// Generate buttons for each table
+tableNames.forEach(name => createSidebarButton(name.name));
+
+
 setTimeout(() => {
     reviewingText.innerHTML = "❌ <b>Loan Denied.</b> Gavin didn't even open the request.";
     reviewingText.style.color = "red";
