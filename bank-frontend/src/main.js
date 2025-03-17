@@ -116,6 +116,40 @@ function createSidebarButton(name) {
 
 // Generate buttons for each table
 tableNames.forEach(name => createSidebarButton(name.name));
+// Create footer container
+const footer = document.createElement("footer");
+footer.style.position = "fixed";
+footer.style.bottom = "0";
+footer.style.width = "100%";
+footer.style.background = "#222";
+footer.style.color = "white";
+footer.style.textAlign = "center";
+footer.style.padding = "10px 0";
+
+// Footer links
+const footerLinks = [
+    { text: "Feedback", url: "#" },
+    { text: "Contact Us", url: "#" },
+    { text: "About Us", url: "#" },
+    { text: "Privacy Policy", url: "#" }
+];
+
+footerLinks.forEach(linkData => {
+    const link = document.createElement("a");
+    link.textContent = linkData.text;
+    link.href = linkData.url;
+    link.style.color = "gold";
+    link.style.margin = "0 15px";
+    link.style.textDecoration = "none";
+    link.style.fontWeight = "bold";
+    
+    link.addEventListener("mouseover", () => link.style.textDecoration = "underline");
+    link.addEventListener("mouseout", () => link.style.textDecoration = "none");
+    
+    footer.appendChild(link);
+});
+
+document.body.appendChild(footer);
 
 
 setTimeout(() => {
