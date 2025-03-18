@@ -30,7 +30,7 @@ document.body.appendChild(helloText);
 
 //for the meme
 const subText = document.createElement("p");
-subText.innerHTML = "Loan Department Update: Gavin has <u>denied</u> your request before you even applied.";
+subText.innerHTML = "Loan Department Update: Austin has <u>denied</u> your request before you even applied.";
 subText.style.color = "red";
 subText.style.fontSize = "18px";
 subText.style.fontStyle = "italic";
