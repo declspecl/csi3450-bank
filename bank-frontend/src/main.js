@@ -73,7 +73,7 @@ sidebar.style.top = "0";
 sidebar.style.width = "200px";
 sidebar.style.height = "100vh";
 sidebar.style.background = "#333";
-sidebar.style.padding = "80px 10px 10px"; // Add top padding to avoid overlap
+sidebar.style.padding = "80px 10px 10px"; // Increase top padding to move buttons down further
 sidebar.style.display = "flex";
 sidebar.style.flexDirection = "column";
 sidebar.style.alignItems = "center";
@@ -116,6 +116,22 @@ function createSidebarButton(name) {
 
 // Generate buttons for each table
 tableNames.forEach(name => createSidebarButton(name.name));
+
+// Create a button at the top right of the page
+const topRightButton = document.createElement("button");
+topRightButton.textContent = "Login";
+topRightButton.style.position = "absolute";
+topRightButton.style.top = "10px";
+topRightButton.style.right = "10px";
+topRightButton.style.background = "gold";
+topRightButton.style.color = "black";
+topRightButton.style.border = "none";
+topRightButton.style.padding = "15px 30px";
+topRightButton.style.fontSize = "18px";
+topRightButton.style.cursor = "pointer";
+topRightButton.style.fontWeight = "bold";
+document.body.appendChild(topRightButton);
+
 // Create footer container
 const footer = document.createElement("footer");
 footer.style.position = "fixed";
