@@ -3,7 +3,7 @@
 from re import I
 import jsonify
 import psycopg2 as pg
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from queries import get_partial_match_banks_query
 
 app = Flask(__name__)
@@ -33,13 +33,27 @@ def get_get_all_banks_query() -> None:
         location=location_filter if location_filter else ""
     )
 
-    cursor.execute(query, params)
-    banks = cursor.fetchall()
+    try:
+        cursor.execute(query, params)
+        banks = cursor.fetchall()
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
 
-    print(banks)
+    bank_list = []
+    for bank in banks:
+        bank_list.append({
+            "bank_id": bank[0],
+            "name": bank[1],
+            "routing_number": bank[2],
+            "location": bank[3],
+            "phone_number": bank[4]
+        })
 
-    cursor.close()
-    return None
+    return jsonify(bank_list)
 
 if __name__ == "__main__":
     app.run(debug=True)
