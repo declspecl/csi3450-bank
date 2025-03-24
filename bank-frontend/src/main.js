@@ -19,7 +19,7 @@ document.body.style.background = "linear-gradient(to right, #000000, #C5A30F)";
 const helloText = document.createElement("p");
 helloText.textContent = "💰 Welcome to our Bank App! Your money is (probably) safe. 💸"; 
 helloText.style.color = "gold"; 
-helloText.style.fontSize = "24px";
+helloText.style.fontSize = "30px";
 helloText.style.fontWeight = "bold"; 
 helloText.style.fontFamily = "Comic Sans MS, cursive"; // You know I had to do it to em
 helloText.style.textAlign = "center";
@@ -30,9 +30,9 @@ document.body.appendChild(helloText);
 
 //for the meme
 const subText = document.createElement("p");
-subText.innerHTML = "Loan Department Update: Austin has <u>denied</u> your request before you even applied.";
+subText.innerHTML = "Loan Department Update: Nicholas has <u>denied</u> your request before you even applied.";
 subText.style.color = "red";
-subText.style.fontSize = "18px";
+subText.style.fontSize = "24px";
 subText.style.fontStyle = "italic";
 subText.style.textAlign = "center";
 subText.style.textShadow = "2px 2px 4px black";
@@ -98,7 +98,7 @@ const tableNames = [
     {name :"Transactions", url : "transactions.html"}];
 
 // Function to create sidebar buttons
-function createSidebarButton(name) {
+function createSidebarButton(name, url) {
     const button = document.createElement("button");
     button.textContent = name;
     button.style.width = "100%";
@@ -110,12 +110,18 @@ function createSidebarButton(name) {
     button.style.cursor = "pointer";
     button.style.fontWeight = "bold";
     
-    
+    //Adding code to have buttons go to their respective html pages.
+    button.addEventListener("click", () => {
+        window.location.href = url;
+    });
+
+
     sidebar.appendChild(button);
 }
 
-// Generate buttons for each table
-tableNames.forEach(name => createSidebarButton(name.name));
+// Generate buttons for each table -updated args for urls
+tableNames.forEach(table => createSidebarButton(table.name, table.url));
+
 // Create footer container
 const footer = document.createElement("footer");
 footer.style.position = "fixed";
@@ -153,7 +159,7 @@ document.body.appendChild(footer);
 
 
 setTimeout(() => {
-    reviewingText.innerHTML = "❌ <b>Loan Denied.</b> Gavin didn't even open the request.";
+    reviewingText.innerHTML = "❌ <b>Loan Denied.</b> Nicholas didn't even open the request.";
     reviewingText.style.color = "red";
 }, 3000); // Wait 3 seconds before crushing hopes
 
