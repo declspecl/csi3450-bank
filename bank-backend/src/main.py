@@ -38,7 +38,7 @@ class Bank:
             self.phone_number
         )
 
-    def to_json(self) -> dict:
+    def to_json(self) -> dict[str, str | int]:
         return {
             "bank_id": self.bank_id,
             "name": self.name,
@@ -71,7 +71,7 @@ def get_get_all_banks_query() -> str:
     finally:
         cursor.close()
 
-    banks = []
+    banks: list[Bank] = []
     for bank_row in bank_rows:
         banks.append(Bank(
             int(bank_row[0]),
