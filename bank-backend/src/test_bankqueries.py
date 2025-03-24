@@ -1,7 +1,7 @@
 import psycopg2
 
 from queries.bank_queries import (
-    get_all_banks,
+    get_get_all_banks_query,
     filter_banks_by_name,
     filter_banks_by_location
 )
@@ -16,7 +16,7 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 
 # Test: Get all banks
-query = get_all_banks()
+query = get_get_all_banks_query()
 cur.execute(query)
 banks = cur.fetchall()
 print("All Banks:", banks)
