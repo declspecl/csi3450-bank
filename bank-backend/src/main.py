@@ -10,3 +10,5 @@ def get_root():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+#Bernard testing a push
