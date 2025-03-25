@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
-import json
 import psycopg2 as pg
 from flask_cors import CORS
-from flask import Flask, request, jsonify
+from flask import Flask, Response, request, jsonify
 from queries.bank_queries import get_partial_match_banks_query
 
 app = Flask(__name__)
@@ -50,7 +49,7 @@ class Bank:
         }
 
 @app.route("/banks")
-def get_get_all_banks_query() -> str:
+def get_get_all_banks_query() -> Response:
     cursor = conn.cursor()
 
     name = request.args.get("name")
@@ -68,8 +67,9 @@ def get_get_all_banks_query() -> str:
         bank_rows = cursor.fetchall()
         conn.commit()
     except Exception as e:
+        print("Error executing query: {}".format(e))
         conn.rollback()
-        return json.dumps([])
+        return jsonify([])
     finally:
         cursor.close()
 
@@ -83,7 +83,7 @@ def get_get_all_banks_query() -> str:
             bank_row[4]
         ))
 
-    return json.dumps({
+    return jsonify({
         "banks": [bank.to_json() for bank in banks]
     })
 
