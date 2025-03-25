@@ -13,7 +13,7 @@ To run the scripts in the intended manner, run the following commands in a termi
 2. `python src/main.py`
 
 
-##Flask dependency
+###Flask dependency
 pip install flask flask-cors psycopg2
 
 ### DATABASE_PASSWORD 
