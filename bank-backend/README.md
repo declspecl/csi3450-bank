@@ -13,6 +13,9 @@ To run the scripts in the intended manner, run the following commands in a termi
 2. `python src/main.py`
 
 
+##Flask dependency
+pip install flask flask-cors psycopg2
+
 ### DATABASE_PASSWORD 
  DATABASE_PASSWORD = "postgres" in main.py
  Make sure this matches the password for your Bank Server in PGAdmin
