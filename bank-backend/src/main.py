@@ -85,5 +85,9 @@ def get_get_all_banks_query() -> str:
         "banks": [bank.to_json() for bank in banks]
     })
 
+@app.route("/hello")
+def hello() -> str:
+    return "Hello"
+
 if __name__ == "__main__":
     app.run(port=8000, debug=True)
