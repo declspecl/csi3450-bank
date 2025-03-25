@@ -16,7 +16,7 @@ def get_partial_match_banks_query(**kwargs: Unpack[GetPartialMatchBanksQueryPara
     query = "SELECT * FROM banks WHERE name ILIKE %s AND location ILIKE %s"
     params: tuple[str, str] = (
         "%{}%".format(name if name else ""),
-        "%{}".format(location if location else "")
+        "%{}%".format(location if location else "")
     )
 
     return query, params

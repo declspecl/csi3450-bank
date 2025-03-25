@@ -2,10 +2,12 @@
 
 import json
 import psycopg2 as pg
-from flask import Flask, request
+from flask_cors import CORS
+from flask import Flask, request, jsonify
 from queries.bank_queries import get_partial_match_banks_query
 
 app = Flask(__name__)
+CORS(app)
 
 DATABASE_NAME="bank"
 DATABASE_USER="postgres"
