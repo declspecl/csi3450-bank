@@ -11,3 +11,7 @@ To run the scripts in the intended manner, run the following commands in a termi
 
 1. In a terminal, run on Mac/Linux: `source ./.venv/bin/activate` or on Windows: `.\.venv\Scripts\Activate.bat`
 2. `python src/main.py`
+
+
+##Flask dependency
+pip install flask flask-cors psycopg2
