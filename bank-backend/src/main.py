@@ -86,6 +86,37 @@ def get_get_all_banks_query() -> Response:
     return jsonify({
         "banks": [bank.to_json() for bank in banks]
     })
+#Adding basic backend setup for people to ensure frontend connection 
+# Can change later just needed something running - Stin
+@app.route("/people")
+def get_people():
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT * FROM people")
+        rows = cursor.fetchall()
+        conn.commit()
+    except Exception as e:
+        print("Error fetching People")
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+    people = []
+    for row in rows:
+        people.append({
+            "person_id": row[0],
+            "first_name": row[1],
+            "last_name": row[2],
+            "birthday": str(row[3]),
+            "email": row[4],
+            "phone_number": row[5],
+            "address": row[6],
+            "ssn": row[7],
+            "credit_score": row[8]
+        })
+
+    return jsonify(people)
 
 if __name__ == "__main__":
     app.run(port=8000, debug=True)
+
