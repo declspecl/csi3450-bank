@@ -1,3 +1,4 @@
+<!-- transactions.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +20,29 @@
             text-decoration: none; font-weight: bold;
         }
         a:hover { text-decoration: underline; }
+        
+        .filter-container {
+            margin: 20px auto;
+            text-align: center;
+        }
+        .filter-container input, .filter-container select, .filter-container button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .transaction-table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        .transaction-table th, .transaction-table td {
+            border: 1px solid gold;
+            padding: 10px;
+            color: white;
+        }
+        .transaction-table th {
+            background-color: #333;
+        }
     </style>
 </head>
 <body>
@@ -26,6 +50,65 @@
     <p>This is the Transactions page. Eventually, you’ll be able to view past transactions.</p>
     <p>For now, assume your money has mysteriously vanished. 👻💸</p>
     <b>Accounting is just vibes anyway.</b>
+    
+    <div class="filter-container">
+        <input type="text" id="searchTransactions" placeholder="Search transactions...">
+        <input type="text" id="filterSender" placeholder="Filter by Sender">
+        <input type="text" id="filterRecipient" placeholder="Filter by Recipient">
+        <input type="text" id="filterAccount" placeholder="Filter by Account Number">
+        <select id="filterStatus">
+            <option value="">Filter by Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Completed">Completed</option>
+            <option value="Failed">Failed</option>
+        </select>
+        <select id="filterRecent">
+            <option value="">Filter Recent Transactions</option>
+            <option value="7">Last 7 days</option>
+            <option value="30">Last 30 days</option>
+        </select>
+        <button onclick="sortByAmount()">Sort by Amount</button>
+    </div>
+
+    <table class="transaction-table">
+        <thead>
+            <tr>
+                <th>Sender</th>
+                <th>Recipient</th>
+                <th>Account Number</th>
+                <th>Status</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody id="transactionTableBody">
+        </tbody>
+    </table>
+
     <a href="index.html">← Back to Home</a>
+    
+    <script>
+        function displayTransactions() {
+            const tbody = document.getElementById("transactionTableBody");
+            tbody.innerHTML = "";
+            transactions.forEach(tx => {
+                const row = `<tr>
+                    <td>${tx.sender}</td>
+                    <td>${tx.recipient}</td>
+                    <td>${tx.account}</td>
+                    <td>${tx.status}</td>
+                    <td>$${tx.amount}</td>
+                    <td>${tx.date}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+        function sortByAmount() {
+            transactions.sort((a, b) => a.amount - b.amount);
+            displayTransactions();
+        }
+        
+        displayTransactions();
+    </script>
 </body>
 </html>
