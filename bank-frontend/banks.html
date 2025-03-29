@@ -19,6 +19,27 @@
             text-decoration: none; font-weight: bold;
         }
         a:hover { text-decoration: underline; }
+
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid gold;
+            padding: 10px;
+            color: white;
+        }
+        th {
+            background-color: #333;
+        }
+
+        input {
+            margin: 4px;
+            padding: 4px 8px;
+            border: 1px solid gold;
+            background-color: white;
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -27,5 +48,57 @@
     <p>If you were expecting financial advice, you’ve come to the wrong neighborhood.</p>
     <b>Our only investment strategy is praying during finals. 🙏📉</b>
     <a href="index.html">← Back to Home</a>
+
+    <div id="banks-table-controls">
+        <input type="text" id="bank-name-input" placeholder="Search by bank name...">
+        <input type="text" id="bank-location-input" placeholder="Search by bank location...">
+        <button id="search-button" onclick="searchBanks()">Search</button>
+    </div>
+
+    <table id="banks-table">
+        <thead>
+            <tr>
+                <th>Bank ID</th>
+                <th>Bank Name</th>
+                <th>Routing Number</th>
+                <th>Location</th>
+                <th>Phone Number</th>
+            </tr>
+        </thead>
+        <tbody id="banks-table-body"></tbody>
+    </table>
+
+    <script>
+        function searchBanks() {
+            const bankName = document.getElementById("bank-name-input").value;
+            const bankLocation = document.getElementById("bank-location-input").value;
+
+            fetch(`http://localhost:8000/banks?name=${bankName}&location=${bankLocation}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById("banks-table-body");
+                    tableBody.innerHTML = "";
+
+                    data.banks.forEach(bank => {
+                        const row = document.createElement("tr");
+                        
+                        row.innerHTML = `
+                            <td>${bank.bank_id}</td>
+                            <td>${bank.name}</td>
+                            <td>${bank.routing_number}</td>
+                            <td>${bank.location}</td>
+                            <td>${bank.phone_number}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching banks:", error);
+                    alert("Failed to fetch banks");
+                });
+            }
+
+        document.body.onload = searchBanks();
+    </script>
 </body>
 </html>
