@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
-import json
 import psycopg2 as pg
-from flask import Flask, request
+from flask_cors import CORS
+from flask import Flask, Response, request, jsonify
 from queries.bank_queries import get_partial_match_banks_query
 
 app = Flask(__name__)
+CORS(app)
 
 DATABASE_NAME="bank"
 DATABASE_USER="postgres"
@@ -48,7 +49,7 @@ class Bank:
         }
 
 @app.route("/banks")
-def get_get_all_banks_query() -> str:
+def get_get_all_banks_query() -> Response:
     cursor = conn.cursor()
 
     name = request.args.get("name")
@@ -66,8 +67,9 @@ def get_get_all_banks_query() -> str:
         bank_rows = cursor.fetchall()
         conn.commit()
     except Exception as e:
+        print("Error executing query: {}".format(e))
         conn.rollback()
-        return json.dumps([])
+        return jsonify([])
     finally:
         cursor.close()
 
@@ -81,9 +83,39 @@ def get_get_all_banks_query() -> str:
             bank_row[4]
         ))
 
-    return json.dumps({
+    return jsonify({
         "banks": [bank.to_json() for bank in banks]
     })
+#Adding basic backend setup for people to ensure frontend connection 
+# Can change later just needed something running - Stin
+@app.route("/people")
+def get_people():
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT * FROM people")
+        rows = cursor.fetchall()
+        conn.commit()
+    except Exception as e:
+        print("Error fetching People")
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+    people = []
+    for row in rows:
+        people.append({
+            "person_id": row[0],
+            "first_name": row[1],
+            "last_name": row[2],
+            "birthday": str(row[3]),
+            "email": row[4],
+            "phone_number": row[5],
+            "address": row[6],
+            "ssn": row[7],
+            "credit_score": row[8]
+        })
+
+    return jsonify(people)
 
 if __name__ == "__main__":
 <<<<<<< HEAD
@@ -93,4 +125,8 @@ if __name__ == "__main__":
 #Zain testing a push
 =======
     app.run(port=8000, debug=True)
+<<<<<<< HEAD
 >>>>>>> 97356d8d446730f0c227e1a8de126cb9bbe4c315
+=======
+
+>>>>>>> 880fc5f70b8468078650e144593d0818d9286212
