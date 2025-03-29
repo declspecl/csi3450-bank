@@ -31,9 +31,9 @@ def sort_by_balance():
 
     return query
     
-def insert_new_account(account_id, account_number, routing_number, account_type, balance, status, fk_person_id, fk_bank_id):
+def insert_new_account(account_number, routing_number, account_type, balance, status, fk_person_id, fk_bank_id):
     #Allows a new bank account insertion
-    query = "INSERT INTO accounts (%s, %s, %s, %s, %s, %s, %s, %s)"
-    params = (f"%{account_id}%", f"%{account_number}%", f"%{routing_number}%", f"%{account_type}%", f"%{balance}%", f"%{status}%", f"%{fk_person_id}%", f"%{fk_bank_id}%",)
+    query = "INSERT INTO accounts (%s, %s, %s, %s, %s, %s, %s)"
+    params = (f"%{account_number}%", f"%{routing_number}%", f"%{account_type}%", f"%{balance}%", f"%{status}%", f"%{fk_person_id}%", f"%{fk_bank_id}%",)
 
     return query, params

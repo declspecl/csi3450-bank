@@ -6,13 +6,23 @@ def search_transactions():
 
 def filter_by_person(sender, recipient):
     #Filters transactions based on sender/recipient name
-    query = "SELECT * FROM transactions WHERE sender ILIKE %s AND recipient ILIKE %s"
+    query = """
+        SELECT t.* 
+        FROM transactions t
+        JOIN accounts sender_acc ON t.fk_sender_id = sender_acc.account_id
+        JOIN people sender_person ON sender_acc.fk_person_id = sender_person.person_id
+        JOIN accounts recipient_acc ON t.fk_recipient_id = recipient_acc.account_id
+        JOIN people recipient_person ON recipient_acc.fk_person_id = recipient_person.person_id
+        WHERE CONCAT(sender_person.first_name, ' ', sender_person.last_name) ILIKE %s
+        AND CONCAT(recipient_person.first_name, ' ', recipient_person.last_name) ILIKE %s
+    """
+    params = (f"%{sender}%", f"%{recipient}%",)
 
-    return query
+    return query, params
 
 def filter_by_account(person_id):
     #Filters transactions given a person's id
-    query = "SELECT * FROM transactions WHERE person_id ILIKE %s"
+    query = "SELECT t.* FROM transactions t JOIN accounts a ON t.account_id = a.account_id WHERE a.person_id = %s"
     params = (f"%{person_id}%",)
 
     return query, params
@@ -36,9 +46,9 @@ def filter_recent_transactions():
 
     return query
 
-def insert_new_transaction(transaction_id, amount, transaction_date, status, fk_sender_id, fk_recipient_id):
+def insert_new_transaction(amount, transaction_date, status, fk_sender_id, fk_recipient_id):
     #Allows a new transaction insertion
-    query = "INSERT into transactions (%s, %s, %s, %s, %s, %s)"
-    params = (f"%{transaction_id}%", f"%{amount}%", f"%{transaction_date}%", f"%{status}%", f"%{fk_sender_id}%", f"%{fk_recipient_id}%",)
+    query = "INSERT into transactions (%s, %s, %s, %s, %s)"
+    params = (f"%{amount}%", f"%{transaction_date}%", f"%{status}%", f"%{fk_sender_id}%", f"%{fk_recipient_id}%",)
 
     return query, params
