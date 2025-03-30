@@ -163,5 +163,15 @@ def get_people():
     return jsonify(people)
 
 if __name__ == "__main__":
-    app.run(port=8000, debug=True)
+<<<<<<< HEAD
+    app.run(debug=True)
 
+
+#Zain testing a push
+=======
+    app.run(port=8000, debug=True)
+<<<<<<< HEAD
+>>>>>>> 97356d8d446730f0c227e1a8de126cb9bbe4c315
+=======
+
+>>>>>>> 880fc5f70b8468078650e144593d0818d9286212
