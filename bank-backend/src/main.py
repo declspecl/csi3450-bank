@@ -50,80 +50,85 @@ class Bank:
 
 # POST and GET for inserting and retrieving banks
 # The endpoint will handle both GET requests to retrieve banks and POST requests to insert a new bank
-@app.route("/banks", methods=["GET", "POST"])
-def banks_handler() -> Response:
-    if request.method == "GET":
-        # Handles GET requests to retrieve banks
-        cursor = conn.cursor()
+@app.route("/banks", methods=["GET"])
+def get_banks() -> Response:
+    """
+    Handles GET requests to retrieve banks based on name and location.
+    """
+    cursor = conn.cursor()
 
-        name = request.args.get("name")
-        location = request.args.get("location")
+    name = request.args.get("name")
+    location = request.args.get("location")
 
-        print("Got request to /banks with params: name={}, location={}".format(name, location))
+    print(f"Got request to /banks with params: name={name}, location={location}")
 
-        query, params = get_partial_match_banks_query(
-            name=name,
-            location=location
-        )
+    query, params = get_partial_match_banks_query(
+        name=name,
+        location=location
+    )
 
-        try:
-            cursor.execute(query, params)
-            bank_rows = cursor.fetchall()
-            conn.commit()
-        except Exception as e:
-            print("Error executing query: {}".format(e))
-            conn.rollback()
-            return jsonify([])
-        finally:
-            cursor.close()
+    try:
+        cursor.execute(query, params)
+        bank_rows = cursor.fetchall()
+        conn.commit()
+    except Exception as e:
+        print(f"Error executing query: {e}")
+        conn.rollback()
+        return jsonify([]), 500
+    finally:
+        cursor.close()
 
-        banks: list[Bank] = []
-        for bank_row in bank_rows:
-            banks.append(Bank(
-                int(bank_row[0]),
-                bank_row[1],
-                int(bank_row[2]),
-                bank_row[3],
-                bank_row[4]
-            ))
+    banks: list[Bank] = []
+    for bank_row in bank_rows:
+        banks.append(Bank(
+            int(bank_row[0]),
+            bank_row[1],
+            int(bank_row[2]),
+            bank_row[3],
+            bank_row[4]
+        ))
 
-        return jsonify({
-            "banks": [bank.to_json() for bank in banks]
-        })
+    return jsonify({
+        "banks": [bank.to_json() for bank in banks]
+    })
 
-    elif request.method == "POST":
-        # Handles POST requests to insert a new bank
-        data = request.json
 
-        new_bankid = data.get("bank_id")
-        new_name = data.get("name")
-        new_location = data.get("location")
-        new_routing_number = data.get("routing_number")
-        new_phone_number = data.get("phone_number")
+@app.route("/banks", methods=["POST"])
+def create_new_bank() -> Response:
+    """
+    Handles POST requests to insert a new bank.
+    """
+    data = request.json
 
-        if not all([new_bankid, new_name, new_location, new_routing_number, new_phone_number]):
-            return jsonify({"error": "All fields are required: bank_id, name, location, routing_number, phone_number"}), 400
+    new_bankid = data.get("bank_id")
+    new_name = data.get("name")
+    new_location = data.get("location")
+    new_routing_number = data.get("routing_number")
+    new_phone_number = data.get("phone_number")
 
-        query, params = get_partial_match_banks_query(
-            insert=True,
-            new_bankid=new_bankid,
-            new_name=new_name,
-            new_location=new_location,
-            new_routing_number=new_routing_number,
-            new_phone_number=new_phone_number,
-        )
+    if not all([new_bankid, new_name, new_location, new_routing_number, new_phone_number]):
+        return jsonify({"error": "All fields are required: bank_id, name, location, routing_number, phone_number"}), 400
 
-        cursor = conn.cursor()
-        try:
-            cursor.execute(query, params)
-            conn.commit()
-            return jsonify({"message": "✅ Bank inserted successfully!"}), 201
-        except Exception as e:
-            conn.rollback()
-            print(f"Error inserting bank: {e}")
-            return jsonify({"error": "Failed to insert bank"}), 500
-        finally:
-            cursor.close()
+    query, params = get_partial_match_banks_query(
+        insert=True,
+        new_bankid=new_bankid,
+        new_name=new_name,
+        new_location=new_location,
+        new_routing_number=new_routing_number,
+        new_phone_number=new_phone_number,
+    )
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(query, params)
+        conn.commit()
+        return jsonify({"message": "✅ Bank inserted successfully!"}), 201
+    except Exception as e:
+        conn.rollback()
+        print(f"Error inserting bank: {e}")
+        return jsonify({"error": "Failed to insert bank"}), 500
+    finally:
+        cursor.close()
 
 #Adding basic backend setup for people to ensure frontend connection 
 # Can change later just needed something running - Stin
