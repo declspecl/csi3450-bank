@@ -98,25 +98,8 @@
             </tr>
         </thead>
         <tbody id="accountTableBody">
-            <!-- Accounts will be dynamically added here -->
         </tbody>
     </table>
-
-    <h2>Insert New Account</h2>
-    <div class="filter-container">
-        <input type="text" id="newName" placeholder="Name">
-        <select id="newType">
-            <option value="Savings">Savings</option>
-            <option value="Checking">Checking</option>
-        </select>
-        <select id="newStatus">
-            <option value="Active">Active</option>
-            <option value="Closed">Closed</option>
-        </select>
-        <input type="text" id="newBalance" placeholder="Balance">
-        <button onclick="insertAccount()">Insert Account</button>
-    </div>
-    
     <a href="index.html">← Back to Home</a>
     
     <script>
@@ -133,19 +116,6 @@
                 tbody.innerHTML += row;
             });
         }
-        
-        function insertAccount() {
-            const name = document.getElementById("newName").value;
-            const type = document.getElementById("newType").value;
-            const status = document.getElementById("newStatus").value;
-            const balance = document.getElementById("newBalance").value;
-            
-            if (name && type && status && balance) {
-                accounts.push({ name, type, status, balance });
-                displayAccounts();
-            }
-        }
-        
         function sortByBalance() {
             accounts.sort((a, b) => a.balance - b.balance);
             displayAccounts();
