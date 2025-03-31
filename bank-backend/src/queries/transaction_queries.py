@@ -1,11 +1,14 @@
-def search_transactions():
-    #Retrieves all transactions
+def search_transactions() -> tuple[str, tuple[()]]:
+    """Retrieves all transactions"""
+
     query = "SELECT * FROM transactions"
+    params = ()
 
-    return query
+    return query, params
 
-def filter_by_person(sender, recipient):
-    #Filters transactions based on sender/recipient name
+def filter_by_person(sender: str, recipient: str) -> tuple[str, tuple[str, str]]:
+    """Filters transactions based on sender/recipient name"""
+
     query = """
         SELECT t.* 
         FROM transactions t
@@ -20,35 +23,48 @@ def filter_by_person(sender, recipient):
 
     return query, params
 
-def filter_by_account(person_id):
-    #Filters transactions given a person's id
+def filter_by_account(person_id: int) -> tuple[str, tuple[str]]:
+    """Filters transactions given a person's id"""
+
     query = "SELECT t.* FROM transactions t JOIN accounts a ON t.account_id = a.account_id WHERE a.person_id = %s"
     params = (f"%{person_id}%",)
 
     return query, params
 
-def filter_by_status(status):
-    #Filters transactions based on the status provided
+def filter_by_status(status: str) -> tuple[str, tuple[str]]:
+    """Filters transactions based on the status provided"""
+
     query = "SELECT * FROM transactions WHERE status ILIKE %s"
     params = (f"%{status}%",)
 
     return query, params
 
-def sort_by_amount():
-    #Sorts transactions by the amount from highest to lowest
+def sort_by_amount() -> tuple[str, tuple[()]]:
+    """Sorts transactions by the amount from highest to lowest"""
+
     query = "SELECT  * FROM transactions ORDER BY amount DESC"
+    params = ()
 
-    return query
+    return query, params
 
-def filter_recent_transactions():
-    #Retrieves the most recent transactions and sorts them from most recent to least recent
+def filter_recent_transactions() -> tuple[str, tuple[()]]:
+    """Retrieves the most recent transactions and sorts them from most recent to least recent"""
+
     query = "SELECT * FROM transactions ORDER BY transaction_date DESC"
+    params = ()
 
-    return query
+    return query, params
 
-def insert_new_transaction(amount, transaction_date, status, fk_sender_id, fk_recipient_id):
-    #Allows a new transaction insertion
+def insert_new_transaction(
+    amount: float,
+    transaction_date: str,
+    status: str,
+    fk_sender_id: int,
+    fk_recipient_id: int
+) -> tuple[str, tuple[float, str, str, int, int]]:
+    """Allows a new transaction insertion"""
+
     query = "INSERT into transactions (%s, %s, %s, %s, %s)"
-    params = (f"%{amount}%", f"%{transaction_date}%", f"%{status}%", f"%{fk_sender_id}%", f"%{fk_recipient_id}%",)
+    params = (amount, transaction_date, status, fk_sender_id, fk_recipient_id)
 
     return query, params
