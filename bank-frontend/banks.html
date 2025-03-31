@@ -55,6 +55,17 @@
         <button id="search-button" onclick="searchBanks()">Search</button>
     </div>
 
+    <div id="add-bank-form" style="margin: 20px auto; max-width: 400px;">
+        <h2>Add New Bank</h2>
+        <form onsubmit="addBank(event)">
+            <input type="text" id="new-bank-name" placeholder="Bank Name" required><br>
+            <input type="text" id="new-bank-location" placeholder="Location" required><br>
+            <input type="text" id="new-bank-routing" placeholder="Routing Number" required><br>
+            <input type="tel" id="new-bank-phone" placeholder="Phone Number" required><br>
+            <button type="submit">Add Bank</button>
+        </form>
+    </div>
+  
     <table id="banks-table">
         <thead>
             <tr>
@@ -99,6 +110,47 @@
             }
 
         document.body.onload = searchBanks();
+
+        function addBank(event) {
+            event.preventDefault();
+
+            const newBank = {
+                name: document.getElementById("new-bank-name").value,
+                location: document.getElementById("new-bank-location").value,
+                routing_number: document.getElementById("new-bank-routing").value,
+                phone_number: document.getElementById("new-bank-phone").value
+            };
+
+            fetch("http://localhost:8000/banks", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newBank)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to add bank");
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert("Bank added successfully!");
+
+                // clear the form
+                document.getElementById("new-bank-name").value = "";
+                document.getElementById("new-bank-routing").value = "";
+                document.getElementById("new-bank-location").value = "";
+                document.getElementById("new-bank-phone").value = "";
+
+                // then refresh the table
+                searchBanks();
+            })
+            .catch(error => {
+                console.error("Error adding bank:", error);
+                alert("Failed to add bank");
+            });
+        }
     </script>
 </body>
 </html>
