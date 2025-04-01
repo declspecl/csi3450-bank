@@ -41,13 +41,87 @@
         a:hover {
             text-decoration: underline;
         }
+        
+        .filter-container {
+            margin: 20px auto;
+            text-align: center;
+        }
+        .filter-container input, .filter-container select, .filter-container button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .account-table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        .account-table th, .account-table td {
+            border: 1px solid gold;
+            padding: 10px;
+            color: white;
+        }
+        .account-table th {
+            background-color: #333;
+        }
     </style>
 </head>
 <body>
     <h1>Accounts</h1>
     <p>This is the Accounts page. Eventually, it will display and let you interact with the Accounts table.</p>
-    <p>Unless you want Austin's Marvel Rivals match history please go back to Home Page below </p>
+    <p>Unless you want Austin's Marvel Rivals match history, please go back to the Home Page below.</p>
     <b>He is a Spiderman abuser... </b>
+    
+    <div class="filter-container">
+        <input type="text" id="searchAccounts" placeholder="Search accounts...">
+        <input type="text" id="filterName" placeholder="Filter by Person Name">
+        <select id="filterType">
+            <option value="">Filter by Type</option>
+            <option value="Savings">Savings</option>
+            <option value="Checking">Checking</option>
+        </select>
+        <select id="filterStatus">
+            <option value="">Filter by Status</option>
+            <option value="Active">Active</option>
+            <option value="Closed">Closed</option>
+        </select>
+        <button onclick="sortByBalance()">Sort by Balance</button>
+    </div>
+
+    <table class="account-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Account Type</th>
+                <th>Status</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody id="accountTableBody">
+        </tbody>
+    </table>
     <a href="index.html">← Back to Home</a>
+    
+    <script>
+        function displayAccounts() {
+            const tbody = document.getElementById("accountTableBody");
+            tbody.innerHTML = "";
+            accounts.forEach(acc => {
+                const row = `<tr>
+                    <td>${acc.name}</td>
+                    <td>${acc.type}</td>
+                    <td>${acc.status}</td>
+                    <td>$${acc.balance}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+        function sortByBalance() {
+            accounts.sort((a, b) => a.balance - b.balance);
+            displayAccounts();
+        }
+        
+        displayAccounts();
+    </script>
 </body>
 </html>
