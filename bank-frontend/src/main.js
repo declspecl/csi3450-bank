@@ -139,6 +139,7 @@ logoImage.alt = "Bank Logo";
 logoImage.style.display = "block";
 logoImage.style.margin = "20px auto";
 logoImage.style.maxWidth = "300px";
+logoImage.loading = "eager";
 document.body.appendChild(logoImage);
 
 // Footer links
