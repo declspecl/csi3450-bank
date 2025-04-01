@@ -18,7 +18,7 @@ fetch('http://localhost:8000/people')
     });
     table.appendChild(headerRow);
 
-    data.forEach(person => {
+    data.people.forEach(person => {
       const row = document.createElement('tr');
       const fullName = `${person.first_name} ${person.last_name}`;
       const cells = [
