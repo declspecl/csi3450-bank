@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <title>Banks</title>
     <style>
         body {
@@ -19,13 +20,138 @@
             text-decoration: none; font-weight: bold;
         }
         a:hover { text-decoration: underline; }
+
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid gold;
+            padding: 10px;
+            color: white;
+        }
+        th {
+            background-color: #333;
+        }
+
+        input {
+            margin: 4px;
+            padding: 4px 8px;
+            border: 1px solid gold;
+            background-color: white;
+            color: black;
+        }
     </style>
 </head>
 <body>
     <h1>Banks</h1>
     <p>This is the Banks page. Eventually, it will help you manage banks in the system.</p>
-    <p>If you were expecting financial advice, you’ve come to the wrong neighborhood.</p>
+    <p>If you were expecting financial advice, you've come to the wrong neighborhood.</p>
     <b>Our only investment strategy is praying during finals. 🙏📉</b>
     <a href="index.html">← Back to Home</a>
+
+    <div id="banks-table-controls">
+        <input type="text" id="bank-name-input" placeholder="Search by bank name...">
+        <input type="text" id="bank-location-input" placeholder="Search by bank location...">
+        <button id="search-button" onclick="searchBanks()">Search</button>
+    </div>
+
+    <div id="add-bank-form" style="margin: 20px auto; max-width: 400px;">
+        <h2>Add New Bank</h2>
+        <form onsubmit="addBank(event)">
+            <input type="text" id="new-bank-name" placeholder="Bank Name" required><br>
+            <input type="text" id="new-bank-location" placeholder="Location" required><br>
+            <input type="text" id="new-bank-routing" placeholder="Routing Number" required><br>
+            <input type="tel" id="new-bank-phone" placeholder="Phone Number" required><br>
+            <button type="submit">Add Bank</button>
+        </form>
+    </div>
+  
+    <table id="banks-table">
+        <thead>
+            <tr>
+                <th>Bank ID</th>
+                <th>Bank Name</th>
+                <th>Routing Number</th>
+                <th>Location</th>
+                <th>Phone Number</th>
+            </tr>
+        </thead>
+        <tbody id="banks-table-body"></tbody>
+    </table>
+
+    <script>
+        function searchBanks() {
+            const bankName = document.getElementById("bank-name-input").value;
+            const bankLocation = document.getElementById("bank-location-input").value;
+
+            fetch(`http://localhost:8000/banks?name=${bankName}&location=${bankLocation}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById("banks-table-body");
+                    tableBody.innerHTML = "";
+
+                    data.banks.forEach(bank => {
+                        const row = document.createElement("tr");
+                        
+                        row.innerHTML = `
+                            <td>${bank.bank_id}</td>
+                            <td>${bank.name}</td>
+                            <td>${bank.routing_number}</td>
+                            <td>${bank.location}</td>
+                            <td>${bank.phone_number}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching banks:", error);
+                    alert("Failed to fetch banks");
+                });
+            }
+
+        document.body.onload = searchBanks();
+
+        function addBank(event) {
+            event.preventDefault();
+
+            const newBank = {
+                name: document.getElementById("new-bank-name").value,
+                location: document.getElementById("new-bank-location").value,
+                routing_number: document.getElementById("new-bank-routing").value,
+                phone_number: document.getElementById("new-bank-phone").value
+            };
+
+            fetch("http://localhost:8000/banks", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newBank)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to add bank");
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert("Bank added successfully!");
+
+                // clear the form
+                document.getElementById("new-bank-name").value = "";
+                document.getElementById("new-bank-routing").value = "";
+                document.getElementById("new-bank-location").value = "";
+                document.getElementById("new-bank-phone").value = "";
+
+                // then refresh the table
+                searchBanks();
+            })
+            .catch(error => {
+                console.error("Error adding bank:", error);
+                alert("Failed to add bank");
+            });
+        }
+    </script>
 </body>
 </html>
