@@ -76,7 +76,6 @@
             <tr>
                 <th>Sender</th>
                 <th>Recipient</th>
-                <th>Account Number</th>
                 <th>Status</th>
                 <th>Amount</th>
                 <th>Date</th>
@@ -87,29 +86,5 @@
     </table>
 
     <a href="index.html">← Back to Home</a>
-    
-    <script>
-        function displayTransactions() {
-            const tbody = document.getElementById("transactionTableBody");
-            tbody.innerHTML = "";
-            transactions.forEach(tx => {
-                const row = `<tr>
-                    <td>${tx.sender}</td>
-                    <td>${tx.recipient}</td>
-                    <td>${tx.account}</td>
-                    <td>${tx.status}</td>
-                    <td>$${tx.amount}</td>
-                    <td>${tx.date}</td>
-                </tr>`;
-                tbody.innerHTML += row;
-            });
-        }
-        function sortByAmount() {
-            transactions.sort((a, b) => a.amount - b.amount);
-            displayTransactions();
-        }
-        
-        displayTransactions();
-    </script>
 </body>
 </html>

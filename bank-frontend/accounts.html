@@ -104,25 +104,7 @@
     <a href="index.html">← Back to Home</a>
     
     <script>
-        function displayAccounts() {
-            const tbody = document.getElementById("accountTableBody");
-            tbody.innerHTML = "";
-            accounts.forEach(acc => {
-                const row = `<tr>
-                    <td>${acc.name}</td>
-                    <td>${acc.type}</td>
-                    <td>${acc.status}</td>
-                    <td>$${acc.balance}</td>
-                </tr>`;
-                tbody.innerHTML += row;
-            });
-        }
-        function sortByBalance() {
-            accounts.sort((a, b) => a.balance - b.balance);
-            displayAccounts();
-        }
         
-        displayAccounts();
     </script>
 </body>
 </html>
