@@ -318,9 +318,9 @@ def get_accounts() -> Response:
 
     query, params = get_partial_match_person_query(
         first_name = first_name,
-        last_name = last_name
-        account_type = account_type
-        status = status
+        last_name = last_name,
+        account_type = account_type,
+        status = status,
         sort_by_balance = bool(sort_by_balance)
     )
 
@@ -358,7 +358,7 @@ def create_new_account() -> Response:
     Handles POST requests to insert a new account
     """
     data = request.json
-    query, params = get_partial_match_account_query
+    query, params = get_partial_match_account_query(insert = True, **data)
 
     cursor = conn.cursor()
     try:
@@ -388,8 +388,8 @@ def get_transactions() -> Response:
     recent = request.args.get("recent")
 
     query, params = get_partial_match_transaction_query(
-        status = status
-        sort_by_amount = bool(sort_by_amount)
+        status = status,
+        sort_by_amount = bool(sort_by_amount),
         recent = bool(recent)
     )
 
