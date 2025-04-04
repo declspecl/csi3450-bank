@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 
-import json
 import psycopg2 as pg
-from flask import Flask, request
-from queries.bank_queries import get_partial_match_banks_query
-
 app = Flask(__name__)
 
 DATABASE_NAME="bank"
