@@ -1,70 +1,54 @@
-def search_transactions() -> tuple[str, tuple[()]]:
-    """Retrieves all transactions"""
+from typing import Optional, TypedDict, Unpack
 
-    query = "SELECT * FROM transactions"
-    params = ()
+class GetPartialMatchTransactionQueryParams(TypedDict):
+    status: Optional[str]
+    sort_by_amount: Optional[bool]
+    recent: Optional[bool]
+    insert: Optional[bool]
+    new_amount: Optional[float]
+    new_transaction_date: Optional[str]
+    new_status: Optional[str]
+    new_fk_sender_id: Optional[int]
+    new_fk_recipient_id: Optional[int]
 
-    return query, params
-
-def filter_by_person(sender: str, recipient: str) -> tuple[str, tuple[str, str]]:
-    """Filters transactions based on sender/recipient name"""
-
-    query = """
-        SELECT t.* 
-        FROM transactions t
-        JOIN accounts sender_acc ON t.fk_sender_id = sender_acc.account_id
-        JOIN people sender_person ON sender_acc.fk_person_id = sender_person.person_id
-        JOIN accounts recipient_acc ON t.fk_recipient_id = recipient_acc.account_id
-        JOIN people recipient_person ON recipient_acc.fk_person_id = recipient_person.person_id
-        WHERE CONCAT(sender_person.first_name, ' ', sender_person.last_name) ILIKE %s
-        AND CONCAT(recipient_person.first_name, ' ', recipient_person.last_name) ILIKE %s
+def get_partial_match_transaction_query(**kwargs: Unpack[GetPartialMatchTransactionQueryParams]) -> tuple[str, tuple]:
     """
-    params = (f"%{sender}%", f"%{recipient}%",)
+    Retrieves transaction information based on the provided filters.
+    If no filters are provided, retrieves all transactions.
+    If 'insert' is set to True, inserts a new transaction with its info.
+    """
+    insert = kwargs.get("insert", False)
 
-    return query, params
+    if insert:
+        new_amount = kwargs.get("new_amount")
+        new_transaction_date = kwargs.get("new_transaction_date")
+        new_status = kwargs.get("new_status")
+        new_fk_sender_id = kwargs.get("new_fk_sender_id")
+        new_fk_recipient_id = kwargs.get("new_fk_recipient_id")
 
-def filter_by_account(person_id: int) -> tuple[str, tuple[str]]:
-    """Filters transactions given a person's id"""
+        if not all([new_amount, new_transaction_date, new_status, new_fk_sender_id, new_fk_recipient_id]):
+            raise ValueError("All arguments need to be provided for insertion.")
 
-    query = "SELECT t.* FROM transactions t JOIN accounts a ON t.account_id = a.account_id WHERE a.person_id = %s"
-    params = (f"%{person_id}%",)
+        query = """
+            INSERT INTO transactions (amount, transaction_date, status, fk_sender_id, fk_recipient_id)
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        params = (new_amount, new_transaction_date, new_status, new_fk_sender_id, new_fk_recipient_id)
+        return query, params
 
-    return query, params
+    status = kwargs.get("status")
+    sort_by_amount = kwargs.get("sort_by_amount", False)
+    recent = kwargs.get("recent", False)
 
-def filter_by_status(status: str) -> tuple[str, tuple[str]]:
-    """Filters transactions based on the status provided"""
+    query = "SELECT * FROM transactions WHERE 1=1"
+    params = []
 
-    query = "SELECT * FROM transactions WHERE status ILIKE %s"
-    params = (f"%{status}%",)
+    if status:
+        query += " AND status ILIKE %s"
+        params.append(f"%{status}%")
+    if sort_by_amount:
+        query += " ORDER BY amount DESC"
+    if recent:
+        query += " ORDER BY transaction_date DESC"
 
-    return query, params
-
-def sort_by_amount() -> tuple[str, tuple[()]]:
-    """Sorts transactions by the amount from highest to lowest"""
-
-    query = "SELECT  * FROM transactions ORDER BY amount DESC"
-    params = ()
-
-    return query, params
-
-def filter_recent_transactions() -> tuple[str, tuple[()]]:
-    """Retrieves the most recent transactions and sorts them from most recent to least recent"""
-
-    query = "SELECT * FROM transactions ORDER BY transaction_date DESC"
-    params = ()
-
-    return query, params
-
-def insert_new_transaction(
-    amount: float,
-    transaction_date: str,
-    status: str,
-    fk_sender_id: int,
-    fk_recipient_id: int
-) -> tuple[str, tuple[float, str, str, int, int]]:
-    """Allows a new transaction insertion"""
-
-    query = "INSERT into transactions (%s, %s, %s, %s, %s)"
-    params = (amount, transaction_date, status, fk_sender_id, fk_recipient_id)
-
-    return query, params
+    return query, tuple(params)
