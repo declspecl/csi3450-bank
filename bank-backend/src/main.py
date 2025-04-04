@@ -4,6 +4,8 @@ import psycopg2 as pg
 from flask_cors import CORS
 from flask import Flask, Response, request, jsonify
 from queries.bank_queries import get_partial_match_banks_query, insert_bank_query
+from queries.person_queries import get_partial_match_person_query
+
 
 app = Flask(__name__)
 CORS(app)
@@ -48,6 +50,37 @@ class Bank:
             "phone_number": self.phone_number
         }
 
+
+class Person:
+    def __init__(self, person_id: int, first_name: str, last_name: str, birthday: str, 
+                 email: str, phone_number: str, address: str, ssn: str, credit_score: int):
+        self.person_id = person_id
+        self.first_name = first_name
+        self.last_name = last_name
+        self.birthday = birthday
+        self.email = email
+        self.phone_number = phone_number
+        self.address = address
+        self.ssn = ssn
+        self.credit_score = credit_score
+        
+    def __repr__(self) -> str:
+        return f"Person({self.person_id}, {self.first_name}, {self.last_name})"
+        
+    def to_json(self) -> dict:
+        return {
+            "person_id": self.person_id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "birthday": self.birthday,
+            "email": self.email,
+            "phone_number": self.phone_number,
+            "address": self.address,
+            "ssn": self.ssn, 
+            "credit_score": self.credit_score
+        }
+
+
 # The endpoint will handle GET requests to retrieve banks
 @app.route("/banks", methods=["GET"])
 def get_banks() -> tuple[Response, int]:
@@ -90,6 +123,146 @@ def get_banks() -> tuple[Response, int]:
     return jsonify({
         "banks": [bank.to_json() for bank in banks]
     }), 200
+
+
+# The endpoint will handle POST requests to insert a new bank
+@app.route("/banks", methods=["POST"])
+def create_new_bank() -> tuple[Response, int]:
+    """
+    Handles POST requests to insert a new bank.
+    """
+    data = request.json
+
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    new_name = data.get("name")
+    new_location = data.get("location")
+    new_routing_number = data.get("routing_number")
+    new_phone_number = data.get("phone_number")
+
+    if not all([new_name, new_location, new_routing_number, new_phone_number]):
+        return jsonify({"error": "All fields are required: bank_id, name, location, routing_number, phone_number"}), 400
+
+    query, params = insert_bank_query(
+        new_name=new_name,
+        new_location=new_location,
+        new_routing_number=new_routing_number,
+        new_phone_number=new_phone_number,
+    )
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(query, params)
+        conn.commit()
+        return jsonify({"message": "Bank inserted successfully!"}), 201
+    except Exception as e:
+        conn.rollback()
+        print(f"Error inserting bank: {e}")
+        return jsonify({"error": "Failed to insert bank"}), 500
+    finally:
+        cursor.close()
+
+
+
+
+# POST and GET methods for person route
+@app.route("/people", methods=["GET"])
+def get_people() -> Response:
+    """
+    Handles GET requests to retrieve a persons information based on provided paramaters.
+    """
+    cursor = conn.cursor()
+
+
+    first_name = request.args.get("first_name")
+    last_name = request.args.get("last_name")
+    address = request.args.get("address")
+    sort_by_credit_score = request.args.get("credit_score")
+
+    print(f"Got request to /person with params: first_name={first_name}, last_name={last_name}, address={address}, credit_score={sort_by_credit_score}")
+
+    query, params = get_partial_match_person_query(
+        first_name=first_name,
+        last_name=last_name,
+        address=address,
+        credit_score=sort_by_credit_score
+    )
+
+    try:
+        cursor.execute(query, params)
+        person_rows = cursor.fetchall()
+        conn.commit()
+    except Exception as e:
+        print(f"Error executing query: {e}")
+        conn.rollback()
+        return jsonify([]), 500
+    finally:
+        cursor.close()
+    people: list[object] = []
+    for row in person_rows:
+        people.append({
+            "person_id": row[0],
+            "first_name": row[1],
+            "last_name": row[2],
+            "birthday": str(row[3]),
+            "email": row[4],
+            "phone_number": row[5],
+            "address": row[6],
+            "ssn": row[7],
+            "credit_score": row[8]
+        })
+
+    return jsonify({"people": people}), 200
+
+@app.route("/people", methods=["POST"])
+def create_new_person() -> Response:
+    """
+    Handles POST requests to insert a new person.
+    """
+    data = request.json
+
+    new_person_id = data.get("person_id")
+    new_first_name = data.get("first_name")
+    new_last_name = data.get("last_name")
+    new_birthday = data.get("birthday")
+    new_email = data.get("email")
+    new_phone_number = data.get("phone_number")
+    new_address = data.get("address")
+    new_ssn = data.get("ssn")
+    new_credit_score = data.get("credit_score")
+
+    if not all([new_person_id, new_first_name, new_last_name, new_birthday, new_email, new_phone_number, new_address, new_ssn, new_credit_score]):
+        return jsonify({"error": "All fields are required: person_id, first_name, last_name, birthday, email, phone_number, address, ssn, credit_score"}), 400
+
+    query, params = get_partial_match_person_query(
+        insert=True,
+        new_person_id=new_person_id,
+        new_first_name=new_first_name,
+        new_last_name=new_last_name,
+        new_birthday=new_birthday,
+        new_email=new_email,
+        new_phone_number=new_phone_number,
+        new_address=new_address,
+        new_ssn=new_ssn,
+        new_credit_score=new_credit_score
+    )
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(query, params)
+        conn.commit()
+        return jsonify({"message": "Person inserted successfully!"}), 201
+    except Exception as e:
+        conn.rollback()
+        print(f"Error inserting person: {e}")
+        return jsonify({"error": "Failed to insert person"}), 500
+    finally:
+        cursor.close()
+
+
+
+
 
 # The endpoint will handle POST requests to insert a new bank
 @app.route("/banks", methods=["POST"])

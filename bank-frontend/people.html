@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <title>People</title>
     <style>
         body {
@@ -9,7 +10,7 @@
             color: gold;
             font-family: "Comic Sans MS", cursive;
             text-align: center;
-            padding-top: 100px;
+            padding-top: 60px;
         }
         h1 { font-size: 36px; text-shadow: 2px 2px 4px black; }
         p { font-size: 20px; color: white; text-shadow: 1px 1px 2px black; }
@@ -19,13 +20,32 @@
             text-decoration: none; font-weight: bold;
         }
         a:hover { text-decoration: underline; }
+
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid gold;
+            padding: 10px;
+            color: white;
+        }
+        th {
+            background-color: #333;
+        }
     </style>
 </head>
 <body>
     <h1>People</h1>
-    <p>This is the People page. Eventually, it will show information on account holders.</p>
-    <p>Fun Fact: No one here knows what they’re doing — we’re all Googling the same stuff.</p>
-    <b>Except Gavin. Gavin knows things. 👀</b>
+    <p>Here are the lovely humans of our bank system:</p>
+    <b>Except Gavin. Gavin is more than human. 👀</b>
+
+    <div id="people-table-container">
+        <p>Loading people...</p>
+    </div>
+
     <a href="index.html">← Back to Home</a>
+
+    <script src="src/people.js"></script>
 </body>
 </html>

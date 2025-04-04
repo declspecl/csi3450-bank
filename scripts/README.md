@@ -7,3 +7,7 @@ To run the scripts in the intended manner, run the following commands in a termi
 4. `python <script-name>.py`
 
 For ex, `python init-db.py`
+
+### DATABASE_PASSWORD 
+ DATABASE_PASSWORD = "postgres"
+ Make sure this matches the password for your Bank Server in PGAdmin

@@ -132,6 +132,16 @@ footer.style.color = "white";
 footer.style.textAlign = "center";
 footer.style.padding = "10px 0";
 
+// Create a logo image element
+const logoImage = document.createElement("img");
+logoImage.src = "logo.png";
+logoImage.alt = "Bank Logo";
+logoImage.style.display = "block";
+logoImage.style.margin = "20px auto";
+logoImage.style.maxWidth = "300px";
+logoImage.loading = "eager";
+document.body.appendChild(logoImage);
+
 // Footer links
 const footerLinks = [
     { text: "Feedback", url: "#" },
