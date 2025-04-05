@@ -6,15 +6,15 @@ from typing import Optional, TypedDict, Unpack
 
 #Stin Code------------------------------------------------------------------------
 def get_paginated_account_query(
-    fk_person_id=None,
-    account_type=None,
-    status=None,
+    fk_person_id: Optional[int] = None,
+    account_type: Optional[str] = None,
+    status: Optional[str] = None,
     # sorting logic
-    sort_by=None,
-    sort_order="ASC",
-    limit=15,
-    offset=0
-) -> tuple[str, tuple]:
+    sort_by: Optional[str] = None,
+    sort_order: str = "ASC",
+    limit: int = 15,
+    offset: int = 0
+) -> tuple[str, tuple[str | int, ...]]:
     """
     Returns a SQL query for fetching accounts with optional filters and sorting.
     """
@@ -26,7 +26,7 @@ def get_paginated_account_query(
         JOIN banks b ON a.fk_bank_id = b.bank_id
         WHERE 1=1
     """
-    params = []
+    params: list[int | str] = []
 
     if fk_person_id:
         query += " AND a.fk_person_id = %s"
@@ -56,7 +56,7 @@ def get_paginated_account_query(
             sort_order = "ASC"
         query += f" ORDER BY {sort_by} {sort_order}"
 
-    if limit is not None and offset is not None:
+    if limit and offset:
         query += " LIMIT %s OFFSET %s"
         params.extend([limit, offset])
 
@@ -128,56 +128,26 @@ def sort_by_balance() -> tuple[str, tuple[()]]:
 
 """
 
-class GetPartialMatchAccountQueryParams(TypedDict):
+class GetAccountQueryParams(TypedDict):
     first_name: Optional[str]
-    last_name: Optional[str]
+    last_name: Optional[str] 
     account_type: Optional[str]
     status: Optional[str]
     sort_by_balance: Optional[bool]
-    insert: Optional[bool]
-    new_account_number: Optional[str]
-    new_routing_number: Optional[str]
-    new_account_type: Optional[str]
-    new_balance: Optional[float]
-    new_status: Optional[str]
-    new_fk_person_id: Optional[int]
-    new_fk_bank_id: Optional[int]
 
-def get_partial_match_account_query(**kwargs: Unpack[GetPartialMatchAccountQueryParams]) -> tuple[str, tuple]:
+def get_account_query(**kwargs: Unpack[GetAccountQueryParams]) -> tuple[str, tuple[str, ...]]:
     """
     Retrieves account information based on the provided filters.
     If no filters are provided, retrieves all accounts.
-    If 'insert' is set to True, inserts a new account with its info.
     """
-    insert = kwargs.get("insert", False)
-
-    if insert:
-        new_account_number = kwargs.get("new_account_number")
-        new_routing_number = kwargs.get("new_routing_number")
-        new_account_type = kwargs.get("new_account_type")
-        new_balance = kwargs.get("new_balance")
-        new_status = kwargs.get("new_status")
-        new_fk_person_id = kwargs.get("new_fk_person_id")
-        new_fk_bank_id = kwargs.get("new_fk_bank_id")
-
-        if not all([new_account_number, new_routing_number, new_account_type, new_balance, new_status, new_fk_person_id, new_fk_bank_id]):
-            raise ValueError("All arguments need to be provided for insertion.")
-
-        query = """
-            INSERT INTO accounts (account_number, routing_number, account_type, balance, status, fk_person_id, fk_bank_id)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """
-        params = (new_account_number, new_routing_number, new_account_type, new_balance, new_status, new_fk_person_id, new_fk_bank_id)
-        return query, params
-
     first_name = kwargs.get("first_name")
     last_name = kwargs.get("last_name")
-    account_type = kwargs.get("account_type")
+    account_type = kwargs.get("account_type") 
     status = kwargs.get("status")
     sort_by_balance = kwargs.get("sort_by_balance", False)
 
     query = "SELECT * FROM accounts WHERE 1=1"
-    params = []
+    params: list[str] = []
 
     if first_name:
         query += " AND first_name ILIKE %s"
@@ -195,3 +165,34 @@ def get_partial_match_account_query(**kwargs: Unpack[GetPartialMatchAccountQuery
         query += " ORDER BY balance DESC"
 
     return query, tuple(params)
+
+class InsertAccountParams(TypedDict):
+    account_number: str
+    routing_number: str
+    account_type: str
+    balance: float
+    status: str
+    fk_person_id: int
+    fk_bank_id: int
+
+def insert_account_query(params: InsertAccountParams) -> tuple[str, tuple[str, str, str, float, str, int, int]]:
+    """
+    Inserts a new account with the provided information.
+    All parameters are required.
+    """
+    query = """
+        INSERT INTO accounts (account_number, routing_number, account_type, balance, status, fk_person_id, fk_bank_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """
+
+    values = (
+        params["account_number"],
+        params["routing_number"], 
+        params["account_type"],
+        params["balance"],
+        params["status"],
+        params["fk_person_id"],
+        params["fk_bank_id"]
+    )
+
+    return query, values
