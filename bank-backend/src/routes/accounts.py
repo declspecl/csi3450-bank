@@ -59,7 +59,22 @@ def get_accounts() -> tuple[Response, int]:
         return jsonify([]), 500
     finally:
         cursor.close()
+
+    cursor = conn.cursor()
+    total_count = 0
     
+    try:
+        cursor.execute("SELECT COUNT(*) FROM accounts")
+        count_row = cursor.fetchone()
+        if count_row:
+            total_count = count_row[0]
+    except Exception as e:
+        print(f"Error executing query: {e}")
+        conn.rollback()
+        return jsonify([]), 500
+    finally:
+        cursor.close()
+
     accounts: list[Account] = []
     for row in account_rows:
         accounts.append(Account(
@@ -73,7 +88,10 @@ def get_accounts() -> tuple[Response, int]:
             row[7]
         ))
 
-    return jsonify({ "accounts": [account.to_json() for account in accounts] }), 200
+    return jsonify({
+        "accounts": [account.to_json() for account in accounts],
+        "total_count": total_count
+    }), 200
 
 
 @app.route("/accounts", methods=["POST"])

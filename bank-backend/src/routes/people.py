@@ -16,7 +16,7 @@ class Person:
         self.credit_score = credit_score
         
     def __repr__(self) -> str:
-        return f"Person({self.person_id}, {self.first_name}, {self.last_name})"
+        return f"Person(person_id={self.person_id}, first_name={self.first_name}, last_name={self.last_name}, birthday={self.birthday}, email={self.email}, phone_number={self.phone_number}, address={self.address}, ssn={self.ssn}, credit_score={self.credit_score})"
         
     def to_json(self) -> dict[str, str | int]:
         return {
@@ -74,6 +74,21 @@ def get_people() -> tuple[Response, int]:
     finally:
         cursor.close()
 
+    cursor = conn.cursor()
+    total_count = 0
+
+    try:
+        cursor.execute("SELECT COUNT(*) FROM people")
+        count_row = cursor.fetchone()
+        if count_row:
+            total_count = count_row[0]
+    except Exception as e:
+        print(f"Error executing query: {e}")
+        conn.rollback()
+        return jsonify([]), 500
+    finally:
+        cursor.close()
+
     people: list[Person] = []
     for row in person_rows:
         people.append(Person(
@@ -88,7 +103,10 @@ def get_people() -> tuple[Response, int]:
             row[8]
         ))
 
-    return jsonify({ "people": [person.to_json() for person in people] }), 200
+    return jsonify({
+        "people": [person.to_json() for person in people],
+        "total_count": total_count
+    }), 200
 
 @app.route("/people", methods=["POST"])
 def create_new_person() -> tuple[Response, int]:
