@@ -42,7 +42,7 @@ document.body.appendChild(subText);
 
 //for the meme
 const reviewingText = document.createElement("p");
-reviewingText.textContent = "🔄 Gavin is reviewing your loan request...";
+reviewingText.textContent = "🔄 Nicholas is reviewing your loan request...";
 reviewingText.style.color = "yellow";
 reviewingText.style.fontSize = "18px";
 reviewingText.style.fontStyle = "italic";

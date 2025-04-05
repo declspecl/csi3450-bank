@@ -36,16 +36,75 @@
     </style>
 </head>
 <body>
-    <h1>People</h1>
-    <p>Here are the lovely humans of our bank system:</p>
-    <b>Except Gavin. Gavin is more than human. 👀</b>
+    <div style="margin-bottom: 40px;">
+        <h1>People</h1>
+        <p>Search them. Sort them. Stalk them (politely). Welcome to the People Database.</p>
+        <b>Except Gavin. Gavin predicted you'd search for him. He left three entries and a riddle. 🔮📜</b>
+      </div>
 
-    <div id="people-table-container">
-        <p>Loading people...</p>
+    <!-- Filter and Sort Controls -->
+<div style="margin-bottom: 20px;">
+    <input type="text" id="search-first-name" placeholder="First Name">
+    <input type="text" id="search-last-name" placeholder="Last Name">
+    <input type="text" id="search-address" placeholder="Address">
+    <input type="number" id="search-credit-score" placeholder="Min Credit Score">
+  
+    <select id="sort-by">
+      <option value="">-- Sort By --</option>
+      <option value="first_name">First Name</option>
+      <option value="last_name">Last Name</option>
+      <option value="credit_score">Credit Score</option>
+    </select>
+  
+    <select id="sort-order">
+      <option value="ASC">Ascending</option>
+      <option value="DESC">Descending</option>
+    </select>
+  
+    <button onclick="applyFilters()">Apply Filters</button>
+        <!-- Inserting new person button, hoping for a drop down menu or something-->
+    <button onclick = toggleForm() class="action-btn"
+    >Insert New Person
+   </button>
+  </div>
+  
+  <!-- New Person Form -->
+<div id="add-person-form" style="display: none; margin: 30px auto; max-width: 600px; background-color: #222; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px gold;">
+    <h2 style="color: gold; margin-bottom: 15px;">Submit responsibly. Austin’s watching.</h2>
+  
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;">
+      <input class="form-field" id="new-first-name" placeholder="First Name">
+      <input class="form-field" id="new-last-name" placeholder="Last Name">
+      <input class="form-field" id="new-birthday" type="date" placeholder="Birthday">
+      <input class="form-field" id="new-email" type="email" placeholder="Email">
+      <input class="form-field" id="new-phone" placeholder="Phone Number">
+      <input class="form-field" id="new-address" placeholder="Address">
+      <input class="form-field" id="new-ssn" placeholder="SSN">
+      <input class="form-field" id="new-credit-score" type="number" placeholder="Credit Score">
     </div>
+  
+    <button onclick="submitNewPerson()" class="action-btn" style="margin-top: 15px;">✅ Submit</button>
+  </div>
+  
+
+
+  <div id="people-table-container">
+    <p>Loading people...</p>
+  </div>
+  <!-- Pagination Controls -->
+<div id="pagination-controls" style="margin-top: 20px;"></div>
+
+
 
     <a href="index.html">← Back to Home</a>
 
     <script src="src/people.js"></script>
 </body>
+<b style="display:block; margin: 20px; font-size: 1.4rem; text-align: center; color: gold; text-shadow: 2px 2px 4px black; background-color: rgba(0, 0, 0, 0.7); padding: 15px; border-radius: 8px;"> 
+    Psst... Gavin is hiding down here! Don’t worry, this *definitely* isn’t a trap leading to a big boss battle... or is it? 😈
+</b>
+<a href="people-table.html" style="display: block; font-weight: bold; font-size: 1.2rem; color: gold; text-align: center; text-shadow: 2px 2px 4px black; background-color: rgba(0, 0, 0, 0.7); text-decoration: none; margin-top: 20px;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+    🔍 View Full People Dataset <span style="font-style: italic;">(Gavin’s waiting... or maybe not?)</span>
+</a>
+
 </html>
