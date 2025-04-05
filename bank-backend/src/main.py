@@ -5,6 +5,7 @@ from flask_cors import CORS
 from flask import Flask, Response, request, jsonify
 from queries.bank_queries import get_partial_match_banks_query, insert_bank_query
 from queries.person_queries import get_partial_match_person_query, get_paginated_person_query
+from queries.account_queries import get_paginated_account_query, insert_new_account
 
 
 app = Flask(__name__)
@@ -123,46 +124,6 @@ def get_banks() -> tuple[Response, int]:
     return jsonify({
         "banks": [bank.to_json() for bank in banks]
     }), 200
-
-
-# The endpoint will handle POST requests to insert a new bank
-@app.route("/banks", methods=["POST"])
-def create_new_bank() -> tuple[Response, int]:
-    """
-    Handles POST requests to insert a new bank.
-    """
-    data = request.json
-
-    if not data:
-        return jsonify({"error": "No data provided"}), 400
-
-    new_name = data.get("name")
-    new_location = data.get("location")
-    new_routing_number = data.get("routing_number")
-    new_phone_number = data.get("phone_number")
-
-    if not all([new_name, new_location, new_routing_number, new_phone_number]):
-        return jsonify({"error": "All fields are required: bank_id, name, location, routing_number, phone_number"}), 400
-
-    query, params = insert_bank_query(
-        new_name=new_name,
-        new_location=new_location,
-        new_routing_number=new_routing_number,
-        new_phone_number=new_phone_number,
-    )
-
-    cursor = conn.cursor()
-    try:
-        cursor.execute(query, params)
-        conn.commit()
-        return jsonify({"message": "Bank inserted successfully!"}), 201
-    except Exception as e:
-        conn.rollback()
-        print(f"Error inserting bank: {e}")
-        return jsonify({"error": "Failed to insert bank"}), 500
-    finally:
-        cursor.close()
-
 
 
 
@@ -337,35 +298,7 @@ def create_new_bank() -> tuple[Response, int]:
     finally:
         cursor.close()
 
-@app.route("/people")
-def get_people():
-    cursor = conn.cursor()
-    try:
-        cursor.execute("SELECT * FROM people")
-        rows = cursor.fetchall()
-        conn.commit()
-    except Exception as e:
-        print("Error fetching People")
-        conn.rollback()
-        print(f"Error inserting bank: {e}")  # <-- Add this to print the exact error
-        return jsonify({"error": str(e)}), 500
-    finally:
-        cursor.close()
-    people: list[object] = []
-    for row in rows:
-        people.append({
-            "person_id": row[0],
-            "first_name": row[1],
-            "last_name": row[2],
-            "birthday": str(row[3]),
-            "email": row[4],
-            "phone_number": row[5],
-            "address": row[6],
-            "ssn": row[7],
-            "credit_score": row[8]
-        })
 
-    return jsonify(people)
 class Transaction:
     def __init__(self, transaction_id: int, fk_sender_id: str, fk_recipient_id: str, status: str, amount: float, transaction_date: str):
         self.transaction_id = transaction_id
@@ -435,11 +368,116 @@ class Account:
             "fk_bank_id": self.fk_bank_id
         }
 
+# Stin redoing the account route
 @app.route("/accounts", methods=["GET"])
 def get_accounts() -> tuple[Response, int]:
     """
-    Handles GET requests to retrieve accounts with filters if provided.
+    Handles GET requests to retrieve accounts with optional filters, sorting, and pagination.
     """
+    cursor = conn.cursor()
+
+    fk_person_id = request.args.get("fk_person_id")
+    account_type = request.args.get("account_type")
+    status = request.args.get("status")
+    sort_by = request.args.get("sort_by")
+    sort_order = request.args.get("sort_order", default="ASC")
+    page = request.args.get("page", default=1, type=int)
+    page_size = request.args.get("page_size", default=15, type=int)
+    limit = page_size
+    offset = (page - 1) * page_size
+
+    query, params = get_paginated_account_query(
+        fk_person_id=fk_person_id,
+        account_type=account_type,
+        status=status,
+        sort_by=sort_by,
+        sort_order=sort_order,
+        limit=limit,
+        offset=offset
+    )
+
+    try:
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+        conn.commit()
+
+        # Count total rows for pagination
+        cursor2 = conn.cursor()
+        cursor2.execute("SELECT COUNT(*) FROM accounts")
+        total_count = cursor2.fetchone()[0]
+        cursor2.close()
+    except Exception as e:
+        print(f"Error retrieving accounts: {e}")
+        conn.rollback()
+        return jsonify({"error": "Failed to retrieve accounts"}), 500
+    finally:
+        cursor.close()
+
+    accounts = []
+    for row in rows:
+        accounts.append({
+            "account_number": row[0],
+            "routing_number": row[1],
+            "account_type": row[2],
+            "balance": float(row[3]),
+            "status": row[4],
+            "fk_person_id": row[5],
+            #Stin - Might comment this out later and use bank name instead
+            # but for now, I will keep it as is
+            "fk_bank_id": row[6],
+            "bank_name": row[7]  # for showing bank name
+        })
+
+    return jsonify({
+        "accounts": accounts,
+        "total_count": total_count
+    }), 200
+    
+    
+    #setting up the route for inserting a new account
+@app.route("/accounts", methods=["POST"])
+def create_new_account() -> Response:
+    """
+    Handles POST requests to insert a new account.
+    """
+    data = request.json
+
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    new_account_number = data.get("account_number")
+    new_routing_number = data.get("routing_number")
+    new_account_type = data.get("account_type")
+    new_balance = data.get("balance")
+    new_status = data.get("status")
+    new_fk_person_id = data.get("fk_person_id")
+    new_fk_bank_id = data.get("fk_bank_id")
+
+    if not all([new_account_number, new_routing_number, new_account_type, new_balance, new_status, new_fk_person_id, new_fk_bank_id]):
+        return jsonify({"error": "All fields are required: account_number, routing_number, account_type, balance, status, fk_person_id, fk_bank_id"}), 400
+
+    query, params = insert_new_account(
+        account_number=new_account_number,
+        routing_number=new_routing_number,
+        account_type=new_account_type,
+        balance=new_balance,
+        status=new_status,
+        fk_person_id=new_fk_person_id,
+        fk_bank_id=new_fk_bank_id
+    )
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(query, params)
+        conn.commit()
+        return jsonify({"message": "✅ Account inserted successfully!"}), 201
+    except Exception as e:
+        conn.rollback()
+        print(f"Error inserting account: {e}")
+        return jsonify({"error": "Failed to insert account"}), 500
+    finally:
+        cursor.close()
+#------------------------------------------------
     
 if __name__ == "__main__":
     app.run(port=8000, debug=True)

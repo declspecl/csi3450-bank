@@ -10,7 +10,7 @@ def create_connection():
     DATABASE_HOST = "localhost"
     DATABASE_NAME = "bank"
     DATABASE_USER = "postgres"
-    DATABASE_PASSWORD = "postgres"
+    DATABASE_PASSWORD = "Snowleopard11"
 
     print("[.] Connecting to database")
 
@@ -76,6 +76,18 @@ def insert_sample_data(conn, cursor, clear_tables: bool):
     conn.commit()
 
     print("[+] Successfully inserted all sample data")
+    
+    # 🔧 Fixing auto-increment sequences for each table
+    print("[.] Fixing serial sequences for auto-incremented IDs")
+    sequence_fix_sql = '''
+        SELECT setval(pg_get_serial_sequence('people', 'person_id'), (SELECT COALESCE(MAX(person_id), 1) FROM people));
+        SELECT setval(pg_get_serial_sequence('accounts', 'account_id'), (SELECT COALESCE(MAX(account_id), 1) FROM accounts));
+        SELECT setval(pg_get_serial_sequence('banks', 'bank_id'), (SELECT COALESCE(MAX(bank_id), 1) FROM banks));
+        SELECT setval(pg_get_serial_sequence('transactions', 'transaction_id'), (SELECT COALESCE(MAX(transaction_id), 1) FROM transactions));
+    '''
+    cursor.execute(sequence_fix_sql)
+    conn.commit()
+    print("[+] Serial sequences successfully updated")
 
 def main():
     conn = create_connection()

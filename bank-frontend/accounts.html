@@ -1,4 +1,115 @@
-<!-- accounts.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Accounts</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <style>
+    body {
+      background: linear-gradient(to right, #000000, #C5A30F);
+      color: gold;
+      font-family: "Comic Sans MS", cursive;
+      text-align: center;
+      padding-top: 60px;
+    }
+
+    h1 { font-size: 36px; text-shadow: 2px 2px 4px black; }
+    p { font-size: 20px; color: white; text-shadow: 1px 1px 2px black; }
+    b { font-size: 16px; color: white; text-shadow: 1px 1px 2px black; }
+    a {
+      color: gold; display: block; margin-top: 40px;
+      text-decoration: none; font-weight: bold;
+    }
+    a:hover { text-decoration: underline; }
+
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid gold;
+      padding: 10px;
+      color: white;
+    }
+    th {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+    <div style="margin-bottom: 40px;">
+        <h1>Bank Accounts</h1>
+        <p>Search them. Sort them. Marvel at them. Welcome to the Account Archives.</p>
+        <p>Just don’t look at Austin’s Marvel Rivals Account... it’s tragic. 😔💸</p>
+        <b>He is a Spiderman abuser... </b>
+      </div>
+
+  <!-- Filter Controls -->
+  <div style="margin-bottom: 20px;">
+    <input type="text" id="search-person-ID" placeholder="Person ID">
+    <input type="text" id="search-account-type" placeholder="Account Type (e.g. Checking)">
+    <input type="text" id="search-account-status" placeholder="Status (e.g. Active, Frozen)">
+    
+    <select id="sort-by">
+      <option value="">-- Sort By --</option>
+      <option value="balance">Balance</option>
+      <option value="account_type">Account Type</option>
+      <option value="status">Status</option>
+    </select>
+
+    <select id="sort-order">
+      <option value="ASC">Ascending</option>
+      <option value="DESC">Descending</option>
+    </select>
+
+    <button onclick="applyFilters()">Apply Filters</button>
+    <button onclick="toggleForm()">Insert New Account</button>
+  </div>
+
+  <!-- New Account Form -->
+  <div id="new-account-form" style="display: none; margin: 30px auto; max-width: 600px; background-color: #222; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px gold;">
+    <h2 style="color: gold; margin-bottom: 15px;">Insert wisely... your bank balance is at stake.</h2>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;">
+      <input class="form-field" id="account-number" placeholder="Account Number">
+      <input class="form-field" id="routing-number" placeholder="Routing Number">
+      <input class="form-field" id="account-type" placeholder="Account Type">
+      <input class="form-field" id="balance" type="number" placeholder="Balance">
+      <input class="form-field" id="status" placeholder="Status">
+      <input class="form-field" id="person-id" placeholder="Person ID">
+      <input class="form-field" id="bank-id" placeholder="Bank ID">
+    </div>
+
+    <button onclick="submitNewAccount()" class="action-btn" style="margin-top: 15px;">💰 Add Account</button>
+  </div>
+
+  <!-- Table Container -->
+  <div id="account-table-container">
+    <p>Loading accounts...</p>
+  </div>
+
+  <!-- Pagination -->
+  <div id="pagination-controls" style="margin-top: 20px;"></div>
+
+  <a href="index.html">← Back to Home</a>
+
+  <script src="src/accounts.js"></script>
+</body>
+
+<b style="display:block; margin: 20px; font-size: 1.4rem; text-align: center; color: gold; text-shadow: 2px 2px 4px black; background-color: rgba(0, 0, 0, 0.7); padding: 15px; border-radius: 8px;"> 
+    FYI: Clicking on the Account Table may reveal Austin’s Marvel Rivals stats. Viewer discretion is advised. 🕷️💀
+</b>
+
+<a href="accounts-table.html" style="display: block; font-weight: bold; font-size: 1.2rem; color: gold; text-align: center; text-shadow: 2px 2px 4px black; background-color: rgba(0, 0, 0, 0.7); text-decoration: none; margin-top: 20px;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+    📊 View Full Account Dataset <span style="font-style: italic;">((A deeper dive than Austin’s rank after the Spidey nerfs...))</span>
+</a>
+
+</html>
+
+
+
+<!-- Stin -commenting out for reference so i can build the new one with pagination and such, keeping for reference -->
+<!-- accounts.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,3 +219,4 @@
     </script>
 </body>
 </html>
+-->
