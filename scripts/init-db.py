@@ -10,7 +10,7 @@ def create_connection():
     DATABASE_HOST = "localhost"
     DATABASE_NAME = "bank"
     DATABASE_USER = "postgres"
-    DATABASE_PASSWORD = "Snowleopard11"
+    DATABASE_PASSWORD = "postgres"
 
     print("[.] Connecting to database")
 
