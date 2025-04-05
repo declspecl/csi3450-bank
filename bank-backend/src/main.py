@@ -5,6 +5,8 @@ from flask_cors import CORS
 from flask import Flask, Response, request, jsonify
 from queries.bank_queries import get_partial_match_banks_query, insert_bank_query
 from queries.person_queries import get_partial_match_person_query
+from queries.account_queries import get_partial_match_account_query
+from queries.transaction_queries import get_partial_match_transaction_query
 
 
 app = Flask(__name__)
@@ -79,6 +81,49 @@ class Person:
             "ssn": self.ssn, 
             "credit_score": self.credit_score
         }
+    
+class Account:
+    def __init__(self, account_id: int, account_number: int, routing_number: int, account_type: str, balance: int, status: str, fk_person_id: int, fk_bank_id: int):
+        self.account_id = account_id
+        self.account_number = account_number
+        self.routing_number = routing_number
+        self.account_type = account_type
+        self.balance = balance
+        self.status = status
+        self.fk_person_id = fk_person_id
+        self.fk_bank_id = fk_bank_id
+    
+    def to_json(self) -> dict:
+        return {
+            "account_id": self.account_id,
+            "account_number": self.account_number,
+            "routing_number": self.routing_number,
+            "account_type": self.account_type,
+            "balance": self.balance,
+            "status": self.status,
+            "fk_person_id": self.fk_person_id,
+            "fk_bank_id": self.fk_bank_id
+        }
+
+class Transaction:
+    def __init__(self, transaction_id: int, amount: int, transaction_date: str, status: str, fk_sender_id: int, fk_recipient_id: int):
+        self.transaction_id = transaction_id
+        self.amount = amount
+        self.trasnaction_date = transaction_date
+        self.status = status
+        self.fk_sender_id = fk_sender_id
+        self.fk_recipient_id = fk_recipient_id
+
+    def to_json(self):
+        return {
+            "transaction_id": self.transaction_id,
+            "amount": self.amount,
+            "transaction_date": self.transaction_date,
+            "status": self.status,
+            "fk_sender_id": self.fk_sender_id,
+            "fk_recipient_id": self.fk_recipient_id
+        }
+
 
 
 # The endpoint will handle GET requests to retrieve banks
@@ -257,6 +302,144 @@ def create_new_person() -> Response:
         conn.rollback()
         print(f"Error inserting person: {e}")
         return jsonify({"error": "Failed to insert person"}), 500
+    finally:
+        cursor.close()
+
+
+#GET and POST methods for accounts route
+@app.route("/accounts", methods=["GET"])
+def get_accounts() -> Response:
+    """
+    Handles GET requests to retrieve account information based on provided parameters    
+    """
+    cursor = conn.cursor()
+
+    first_name = request.args.get("first_name")
+    last_name = request.args.get("last_name")
+    account_type = request.args.get("account_type")
+    status = request.args.get("status")
+    sort_by_balance = request.args.get("sort_by_balance")
+
+    query, params = get_partial_match_person_query(
+        first_name = first_name,
+        last_name = last_name,
+        account_type = account_type,
+        status = status,
+        sort_by_balance = bool(sort_by_balance)
+    )
+
+    try:
+        cursor.execute(query, params)
+        account_rows = cursor.fetchall()
+        conn.commit()
+    except Exception as e:
+        print(f"Error executing query: {e}")
+        conn.rollback()
+        return jsonify([]), 500
+    finally:
+        cursor.close()
+    
+    account = [
+        {
+            "account_id": row[0],
+            "account_number": row[1],
+            "routing_number": row[2],
+            "account_type": row[3],
+            "balance": row[4],
+            "status": row[5],
+            "fk_person_id": row[6],
+            "fk_bank_id": row[7]
+        }
+        for row in account_rows
+    ]
+
+    return jsonify({"accounts": account}), 200
+
+
+@app.route("/accounts", methods=["POST"])
+def create_new_account() -> Response:
+    """
+    Handles POST requests to insert a new account
+    """
+    data = request.json
+    query, params = get_partial_match_account_query(insert = True, **data)
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(query, params)
+        conn.commit()
+        return jsonify({"Message": "Account inserted successfully!"}), 201
+    except Exception as e:
+        conn.rollback()
+        print(f"Error inserting account: {e}")
+        return jsonify({"Error: Failed to insert account"}), 500
+    finally:
+        cursor.close()
+
+
+    
+
+#GET and POST methods for transactions route
+@app.route("/transactions", methods=["GET"])
+def get_transactions() -> Response:
+    """
+    Hadnles GET requests to retrieve transactions based on provided parameters
+    """
+    cursor = conn.cursor()
+
+    status = request.args.get("status")
+    sort_by_amount = request.args.get("sort_by_amount")
+    recent = request.args.get("recent")
+
+    query, params = get_partial_match_transaction_query(
+        status = status,
+        sort_by_amount = bool(sort_by_amount),
+        recent = bool(recent)
+    )
+
+    try:
+        cursor.execute(query, params)
+        transaction_rows = cursor.fetchall()
+        conn.commit()
+    except Exception as e:
+        print(f"Error executing query: {e}")
+        conn.rollback()
+        return jsonify([]), 500
+    finally:
+        cursor.close()
+
+    transactions = [
+        {
+            "transactions_id": row[0],
+            "amount": row[1],
+            "transaction_date": row[2],
+            "status": row[3],
+            "fk_sender_id": row[4],
+            "fk_recipient_id": row[5]
+        }
+        for row in transaction_rows
+    ]
+
+    return jsonify({"transactions": transactions}), 200
+
+
+@app.route("/transactions", methods=["POST"])
+def create_new_transaction() -> Response:
+    """
+    Handles POST requests to insert a new transaction
+    """
+    data = request.json
+    query, params = get_partial_match_transaction_query(insert = True, **data)
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute(query, params)
+        conn.commit()
+        return jsonify({"Message": "Transcation inserted successfully!"}), 201
+    except Exception as e:
+        conn.rollback()
+        print(f"Error inserting transaction: {e}")
+        return jsonify({"Error": "Failed to insert transaction"}), 500
     finally:
         cursor.close()
 
