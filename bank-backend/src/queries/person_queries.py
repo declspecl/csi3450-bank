@@ -43,7 +43,7 @@ class InsertPersonParams(TypedDict):
     ssn: str
     credit_score: int
 
-def insert_person_query(params: InsertPersonParams) -> tuple[str, tuple[str, str, str, str, str, str, str, int]]:
+def insert_person_query(**params: Unpack[InsertPersonParams]) -> tuple[str, tuple[str, str, str, str, str, str, str, int]]:
     """
     Inserts a new person with the provided information.
     All parameters are required.
@@ -67,7 +67,6 @@ def insert_person_query(params: InsertPersonParams) -> tuple[str, tuple[str, str
 
 #Stin - Adding function for pagination will call it in GET request, the other function will be used for inserting a new person in POST request.
 def get_paginated_person_query(
-    *,
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
     address: Optional[str] = None,

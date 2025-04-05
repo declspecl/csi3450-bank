@@ -1,10 +1,10 @@
 from typing import Optional, TypedDict, Unpack
 
-class GetPartialMatchBanksQueryParams(TypedDict):
+class GetBankQueryParams(TypedDict):
     name: Optional[str]
     location: Optional[str]
 
-def get_partial_match_banks_query(**kwargs: Unpack[GetPartialMatchBanksQueryParams]) -> tuple[str, tuple[str, str]]:
+def get_bank_query(**kwargs: Unpack[GetBankQueryParams]) -> tuple[str, tuple[str, str]]:
     """
     Retrieves banks based on the provided filters.
     If no filters are provided, retrieves all banks.
