@@ -1,62 +1,23 @@
 from typing import Optional, TypedDict, Unpack
 
-class GetPartialMatchpersonQueryParams(TypedDict):
+class GetPersonQueryParams(TypedDict):
     first_name: Optional[str]
     last_name: Optional[str]
-    birthday: Optional[str]
-    email: Optional[str]
-    phone_number: Optional[str]
     address: Optional[str]
-    ssn: Optional[str]
-    credit_score: Optional[int]
-    insert: Optional[bool]
-    #new_person_id: Optional[int]
-    new_first_name: Optional[str]
-    new_last_name: Optional[str]
-    new_birthday: Optional[str]
-    new_email: Optional[str]
-    new_phone_number: Optional[str]
-    new_address: Optional[str]
-    new_ssn: Optional[str]
-    new_credit_score: Optional[int]
+    credit_score: Optional[bool]
 
-def get_partial_match_person_query(**kwargs: Unpack[GetPartialMatchpersonQueryParams]) -> tuple[str, tuple]:
+def get_person_query(**kwargs: Unpack[GetPersonQueryParams]) -> tuple[str, tuple[str, ...]]:
     """
-    Retrieves a persons information based on the provided filters.
-    If not filters are provided, retrieves all person.
-    If 'insert' is set to True, inserts a new person with its info.
+    Retrieves person information based on the provided filters.
+    If no filters are provided, retrieves all people.
     """
-
-    # Checks if adding a new person to the database
-    insert = kwargs.get("insert", False)
-
-    if insert:
-        #Stin - commenting out the new_person_id as it is not needed for insertion, looking to auto-increment it in the database
-        #Removing the new_person_id from the params as it is not needed for insertion
-        #new_person_id = kwargs.get("new_person_id")
-        new_first_name = kwargs.get("new_first_name")
-        new_last_name = kwargs.get("new_last_name")
-        new_birthday = kwargs.get("new_birthday")
-        new_email = kwargs.get("new_email")
-        new_phone_number = kwargs.get("new_phone_number")
-        new_address = kwargs.get("new_address")
-        new_ssn = kwargs.get("new_ssn")
-        new_credit_score = kwargs.get("new_credit_score")
-        
-        if not all([new_first_name, new_last_name, new_birthday, new_email, new_phone_number,new_address, new_ssn, new_credit_score]):
-            raise ValueError("All arguments need to be provided for insertion.")
-        
-        query = """INSERT INTO people (first_name,last_name, birthday, email, phone_number, address, ssn, credit_score) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
-        params: tuple[str, str, str, str, str, str, str, int] = ( new_first_name, new_last_name, new_birthday, new_email, new_phone_number, new_address, new_ssn, new_credit_score)
-        return query, params
-
     first_name = kwargs.get("first_name")
     last_name = kwargs.get("last_name")
     address = kwargs.get("address")
     sort_by_credit_score = kwargs.get("credit_score")
 
     query = "SELECT * FROM people WHERE 1=1"
-    params = []
+    params: list[str] = []
 
     if first_name:
         query += " AND first_name ILIKE %s"
@@ -72,6 +33,38 @@ def get_partial_match_person_query(**kwargs: Unpack[GetPartialMatchpersonQueryPa
 
     return query, tuple(params)
 
+class InsertPersonParams(TypedDict):
+    first_name: str
+    last_name: str
+    birthday: str
+    email: str
+    phone_number: str
+    address: str
+    ssn: str
+    credit_score: int
+
+def insert_person_query(params: InsertPersonParams) -> tuple[str, tuple[str, str, str, str, str, str, str, int]]:
+    """
+    Inserts a new person with the provided information.
+    All parameters are required.
+    """
+    query = """
+        INSERT INTO people (first_name, last_name, birthday, email, phone_number, address, ssn, credit_score) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    """
+    values = (
+        params["first_name"],
+        params["last_name"],
+        params["birthday"],
+        params["email"],
+        params["phone_number"],
+        params["address"],
+        params["ssn"],
+        params["credit_score"]
+    )
+
+    return query, values
+
 #Stin - Adding function for pagination will call it in GET request, the other function will be used for inserting a new person in POST request.
 def get_paginated_person_query(
     *,
@@ -83,11 +76,10 @@ def get_paginated_person_query(
     sort_by: Optional[str] = None,
     sort_order: str = "ASC",
     limit: Optional[int] = None,
-    offset: Optional[int] = None,
-    **kwargs
-) -> tuple[str, tuple]:
+    offset: Optional[int] = None
+) -> tuple[str, tuple[str | int, ...]]:
     query = "SELECT * FROM people WHERE 1=1"
-    params = []
+    params: list[str | int] = []
 
     if first_name:
         query += " AND first_name ILIKE %s"
@@ -128,4 +120,3 @@ def get_paginated_person_query(
         params.extend([limit, offset])
 
     return query, tuple(params)
-#-----------------------------------------------
