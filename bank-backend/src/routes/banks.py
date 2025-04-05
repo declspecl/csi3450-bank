@@ -67,9 +67,7 @@ def get_banks() -> tuple[Response, int]:
             bank_row[4]
         ))
 
-    return jsonify({
-        "banks": [bank.to_json() for bank in banks]
-    }), 200
+    return jsonify({ "banks": [bank.to_json() for bank in banks] }), 200
 
 # The endpoint will handle POST requests to insert a new bank
 @app.route("/banks", methods=["POST"])
@@ -82,19 +80,19 @@ def create_new_bank() -> tuple[Response, int]:
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
-    new_name = data.get("name")
-    new_location = data.get("location")
-    new_routing_number = data.get("routing_number")
-    new_phone_number = data.get("phone_number")
+    name = data.get("name")
+    location = data.get("location")
+    routing_number = data.get("routing_number")
+    phone_number = data.get("phone_number")
 
-    if not all([new_name, new_location, new_routing_number, new_phone_number]):
+    if not all([name, location, routing_number, phone_number]):
         return jsonify({"error": "All fields are required: bank_id, name, location, routing_number, phone_number"}), 400
 
     query, params = insert_bank_query(
-        new_name=new_name,
-        new_location=new_location,
-        new_routing_number=new_routing_number,
-        new_phone_number=new_phone_number,
+        name=name,
+        location=location,
+        routing_number=routing_number,
+        phone_number=phone_number
     )
 
     cursor = conn.cursor()

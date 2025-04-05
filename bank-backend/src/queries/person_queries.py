@@ -65,21 +65,24 @@ def insert_person_query(**params: Unpack[InsertPersonParams]) -> tuple[str, tupl
 
     return query, values
 
-#Stin - Adding function for pagination will call it in GET request, the other function will be used for inserting a new person in POST request.
-def get_paginated_person_query(
-    first_name: Optional[str] = None,
-    last_name: Optional[str] = None,
-    address: Optional[str] = None,
-    credit_score: Optional[int] = None,
-    # adding sorting logic
-    sort_by: Optional[str] = None,
-    sort_order: str = "ASC",
-    limit: Optional[int] = None,
-    offset: Optional[int] = None
-) -> tuple[str, tuple[str | int, ...]]:
+class GetPaginatedPersonQueryParams(TypedDict):
+    first_name: Optional[str]
+    last_name: Optional[str]
+    address: Optional[str]
+    credit_score: Optional[int]
+    sort_by: Optional[str]
+    sort_order: str
+    limit: Optional[int]
+    offset: Optional[int]
+
+def get_paginated_person_query(**kwargs: Unpack[GetPaginatedPersonQueryParams]) -> tuple[str, tuple[str | int, ...]]:
     query = "SELECT * FROM people WHERE 1=1"
     params: list[str | int] = []
 
+    first_name = kwargs.get("first_name")
+    last_name = kwargs.get("last_name")
+    address = kwargs.get("address")
+    credit_score = kwargs.get("credit_score")
     if first_name:
         query += " AND first_name ILIKE %s"
         params.append(f"%{first_name}%")
@@ -90,12 +93,11 @@ def get_paginated_person_query(
         query += " AND address ILIKE %s"
         params.append(f"%{address}%")
         
-    #allowing for filtering by credit score ie. >= 700    
+    credit_score = kwargs.get("credit_score")
     if credit_score is not None:
         query += " AND credit_score >= %s"
         params.append(credit_score)
         
-    # - Adding sorting logic--------------------------
     valid_sort_fields = {
         "person_id",
         "first_name",
@@ -107,13 +109,17 @@ def get_paginated_person_query(
         "ssn",
         "credit_score",
     }
+
+    sort_by = kwargs.get("sort_by")
     if sort_by in valid_sort_fields:
-        sort_order = sort_order.upper()
+        sort_order = kwargs.get("sort_order").upper()
         if sort_order not in {"ASC", "DESC"}:
             sort_order = "ASC"
+
         query += f" ORDER BY {sort_by} {sort_order}"
 
-
+    limit = kwargs.get("limit")
+    offset = kwargs.get("offset")
     if limit is not None and offset is not None:
         query += " LIMIT %s OFFSET %s"
         params.extend([limit, offset])

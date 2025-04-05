@@ -2,7 +2,32 @@ from server import app, conn
 from flask import request, jsonify, Response
 from queries.account_queries import get_account_query, insert_account_query
 
-#GET and POST methods for accounts route
+class Account:
+    def __init__(self, account_id: int, account_number: str, routing_number: str, account_type: str, balance: float, status: str, fk_person_id: int, fk_bank_id: int):
+        self.account_id = account_id
+        self.account_number = account_number
+        self.routing_number = routing_number
+        self.account_type = account_type
+        self.balance = balance
+        self.status = status
+        self.fk_person_id = fk_person_id
+        self.fk_bank_id = fk_bank_id
+
+    def to_json(self) -> dict[str, str | float | int]:
+        return {
+            "account_id": self.account_id,
+            "account_number": self.account_number,
+            "routing_number": self.routing_number,
+            "account_type": self.account_type,
+            "balance": self.balance,
+            "status": self.status,
+            "fk_person_id": self.fk_person_id,
+            "fk_bank_id": self.fk_bank_id
+        }
+    
+    def __repr__(self) -> str:
+        return f"Account(account_id={self.account_id}, account_number={self.account_number}, routing_number={self.routing_number}, account_type={self.account_type}, balance={self.balance}, status={self.status}, fk_person_id={self.fk_person_id}, fk_bank_id={self.fk_bank_id})"
+
 @app.route("/accounts", methods=["GET"])
 def get_accounts() -> tuple[Response, int]:
     """
@@ -35,21 +60,20 @@ def get_accounts() -> tuple[Response, int]:
     finally:
         cursor.close()
     
-    account = [
-        {
-            "account_id": row[0],
-            "account_number": row[1],
-            "routing_number": row[2],
-            "account_type": row[3],
-            "balance": row[4],
-            "status": row[5],
-            "fk_person_id": row[6],
-            "fk_bank_id": row[7]
-        }
-        for row in account_rows
-    ]
+    accounts: list[Account] = []
+    for row in account_rows:
+        accounts.append(Account(
+            row[0],
+            row[1],
+            row[2],
+            row[3],
+            row[4],
+            row[5],    
+            row[6],
+            row[7]
+        ))
 
-    return jsonify({"accounts": account}), 200
+    return jsonify({ "accounts": [account.to_json() for account in accounts] }), 200
 
 
 @app.route("/accounts", methods=["POST"])

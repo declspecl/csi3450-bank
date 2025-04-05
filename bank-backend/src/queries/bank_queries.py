@@ -22,34 +22,35 @@ def get_bank_query(**kwargs: Unpack[GetBankQueryParams]) -> tuple[str, tuple[str
     return query, params
 
 class InsertBankQueryParams(TypedDict):
-    new_name: Optional[str]
-    new_location: Optional[str]
-    new_routing_number: Optional[str]
-    new_phone_number: Optional[str]
+    name: Optional[str]
+    location: Optional[str]
+    routing_number: Optional[str]
+    phone_number: Optional[str]
 
 def insert_bank_query(**kwargs: Unpack[InsertBankQueryParams]) -> tuple[str, tuple[str, str, str, str]]:
     """
     Inserts a new bank into the database.
     """
 
-    new_name = kwargs.get("new_name")
-    new_location = kwargs.get("new_location")
-    new_routing_number = kwargs.get("new_routing_number")
-    new_phone_number = kwargs.get("new_phone_number")
+    name = kwargs.get("name")
+    location = kwargs.get("location")
+    routing_number = kwargs.get("routing_number")
+    phone_number = kwargs.get("phone_number")
 
-    if not all([new_name, new_location, new_routing_number, new_phone_number]):
+    if not all([name, location, routing_number, phone_number]):
         raise ValueError("All arguments need to be provided for insertion.")
 
-    assert new_name is not None
-    assert new_location is not None
-    assert new_routing_number is not None
-    assert new_phone_number is not None
+    assert name is not None
+    assert location is not None
+    assert routing_number is not None
+    assert phone_number is not None
 
     query = "INSERT INTO banks (name, location, routing_number, phone_number) VALUES (%s, %s, %s, %s)"
     params: tuple[str, str, str, str] = (
-        new_name,
-        new_location,
-        new_routing_number,
-        new_phone_number
+        name,
+        location,
+        routing_number,
+        phone_number
     )
+
     return query, params

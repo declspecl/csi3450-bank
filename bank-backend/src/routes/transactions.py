@@ -20,8 +20,10 @@ class Transaction:
             "amount": self.amount,
             "date": self.date
         }
+    
+    def __repr__(self) -> str:
+        return f"Transaction(transaction_id={self.transaction_id}, sender={self.sender}, recipient={self.recipient}, status={self.status}, amount={self.amount}, date={self.date})"
 
-#GET and POST methods for transactions route
 @app.route("/transactions", methods=["GET"])
 def get_transactions() -> tuple[Response, int]:
     """
@@ -50,19 +52,18 @@ def get_transactions() -> tuple[Response, int]:
     finally:
         cursor.close()
 
-    transactions = [
-        {
-            "transactions_id": row[0],
-            "amount": row[1],
-            "transaction_date": row[2],
-            "status": row[3],
-            "fk_sender_id": row[4],
-            "fk_recipient_id": row[5]
-        }
-        for row in transaction_rows
-    ]
+    transactions: list[Transaction] = []
+    for row in transaction_rows:
+        transactions.append(Transaction(
+            row[0],
+            row[1],
+            row[2],
+            row[3],
+            row[4],
+            row[5]
+        ))
 
-    return jsonify({"transactions": transactions}), 200
+    return jsonify({ "transactions": [transaction.to_json() for transaction in transactions] }), 200
 
 
 @app.route("/transactions", methods=["POST"])

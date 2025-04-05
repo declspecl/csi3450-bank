@@ -43,78 +43,52 @@ def get_people() -> tuple[Response, int]:
     first_name = request.args.get("first_name")
     last_name = request.args.get("last_name")
     address = request.args.get("address")
-    
-    #Stin adding type = int to credit_score to ensure it is an integer for filtering
     sort_by_credit_score = request.args.get("credit_score", type = int)
     
-    #Stin - Adding sorting--------------------------
     sort_by = request.args.get("sort_by")
     sort_order = request.args.get("sort_order", default="ASC")
-    #Stin - Adding pagination--------------------------
     page = request.args.get("page", default=1, type=int)
     page_size = request.args.get("page_size", default=20, type=int)
     limit = page_size
     offset = (page - 1) * page_size
     
     query, params = get_paginated_person_query(
-    first_name=first_name,
-    last_name=last_name,
-    address=address,
-    credit_score=sort_by_credit_score,
-    sort_by=sort_by,
-    sort_order=sort_order,
-    limit=limit,
-    offset=offset
-)#-----------------------------------------------
-
-#commenting out old code as the new code handles pagination and queries
-#keeping it for reference
-    # print(f"Got request to /person with params: first_name={first_name}, last_name={last_name}, address={address}, credit_score={sort_by_credit_score}")
-
-    # query, params = get_partial_match_person_query(
-        # first_name=first_name,
-        # last_name=last_name,
-        # address=address,
-        # credit_score=sort_by_credit_score
-    # )
+        first_name=first_name,
+        last_name=last_name,
+        address=address,
+        credit_score=sort_by_credit_score,
+        sort_by=sort_by,
+        sort_order=sort_order,
+        limit=limit,
+        offset=offset
+    )
 
     try:
         cursor.execute(query, params)
         person_rows = cursor.fetchall()
         conn.commit()
-        
-        #Stin - adding code to get total number of people----------------
-        cursor2 = conn.cursor()
-        cursor2.execute("SELECT COUNT(*) FROM people")
-        count_row = cursor2.fetchone()
-        assert count_row is not None
-        total_count = count_row[0]
-        cursor2.close()
-        #------------------------------
     except Exception as e:
         print(f"Error executing query: {e}")
         conn.rollback()
         return jsonify([]), 500
     finally:
         cursor.close()
-    people: list[object] = []
+
+    people: list[Person] = []
     for row in person_rows:
-        people.append({
-            "person_id": row[0],
-            "first_name": row[1],
-            "last_name": row[2],
-            "birthday": str(row[3]),
-            "email": row[4],
-            "phone_number": row[5],
-            "address": row[6],
-            "ssn": row[7],
-            "credit_score": row[8]
-        })
-    #Stin- updating return statement to include total number of people
-    return jsonify({
-        "people": people,
-        "total_count": total_count
-        }), 200
+        people.append(Person(
+            row[0],
+            row[1],
+            row[2],
+            row[3],
+            row[4],
+            row[5],
+            row[6],
+            row[7],
+            row[8]
+        ))
+
+    return jsonify({ "people": [person.to_json() for person in people] }), 200
 
 @app.route("/people", methods=["POST"])
 def create_new_person() -> tuple[Response, int]:
@@ -125,8 +99,6 @@ def create_new_person() -> tuple[Response, int]:
     if not data:
         return jsonify({"error": "No data provided"}), 400
     
-    #Stin - removing person_id from params as it is not needed for insertion
-    #new_person_id = data.get("person_id")
     new_first_name = data.get("first_name")
     new_last_name = data.get("last_name")
     new_birthday = data.get("birthday")
