@@ -1,59 +1,3 @@
-# SQL Schea:
-# ```sql
-# CREATE TABLE IF NOT EXISTS banks (
-#     bank_id SERIAL PRIMARY KEY,
-#     name TEXT NOT NULL,
-#     routing_number CHAR(9) NOT NULL UNIQUE,
-#     location TEXT NOT NULL,
-#     phone_number CHAR(14) NOT NULL
-# );
-# 
-# CREATE TABLE IF NOT EXISTS people (
-#     person_id SERIAL PRIMARY KEY,
-#     first_name TEXT NOT NULL,
-#     last_name TEXT NOT NULL,
-#     birthday DATE NOT NULL,
-#     email TEXT NOT NULL,
-#     phone_number CHAR(14) NOT NULL,
-#     address TEXT NOT NULL,
-#     ssn CHAR(11) NOT NULL,
-#     credit_score INTEGER NOT NULL
-# );
-# 
-# CREATE TABLE IF NOT EXISTS accounts (
-#     account_id SERIAL PRIMARY KEY,
-#     account_number VARCHAR(17) NOT NULL UNIQUE,
-#     routing_number CHAR(9) NOT NULL UNIQUE,
-#     account_type TEXT NOT NULL,
-#     balance NUMERIC NOT NULL DEFAULT 0,
-#     status TEXT NOT NULL,
-#     fk_person_id INTEGER NOT NULL REFERENCES people(person_id),
-#     fk_bank_id INTEGER NOT NULL REFERENCES banks(bank_id)
-# );
-# 
-# CREATE TABLE IF NOT EXISTS transactions (
-#     transaction_id SERIAL PRIMARY KEY,
-#     amount NUMERIC NOT NULL,
-#     transaction_date DATE NOT NULL,
-#     status TEXT NOT NULL,
-#     fk_sender_id INTEGER NOT NULL REFERENCES accounts(account_id),
-#     fk_recipient_id INTEGER NOT NULL REFERENCES accounts(account_id),
-#     CONSTRAINT sender_not_recipient CHECK (fk_sender_id <> fk_recipient_id)
-# );
-# 
-# CREATE TABLE IF NOT EXISTS loans (
-#     loan_id SERIAL PRIMARY KEY,
-#     type TEXT NOT NULL,
-#     open_date DATE NOT NULL,
-#     term_length INTEGER NOT NULL,
-#     amount NUMERIC NOT NULL,
-#     status TEXT NOT NULL,
-#     interest_rate NUMERIC NOT NULL,
-#     fk_person_id INTEGER NOT NULL REFERENCES people(person_id),
-#     fk_bank_id INTEGER NOT NULL REFERENCES banks(bank_id)
-# );
-# ```
-
 from typing import Optional, TypedDict, Unpack, Any
 
 class GetLoanQueryParams(TypedDict):
@@ -99,7 +43,9 @@ def get_loan_query(**kwargs: Unpack[GetLoanQueryParams]) -> tuple[str, tuple[Any
     query = """
         SELECT l.loan_id, l.type, l.open_date, l.term_length, l.amount, l.status, 
                l.interest_rate, l.fk_person_id, l.fk_bank_id, 
-               p.first_name, p.last_name, b.name as bank_name
+               p.first_name, p.last_name, p.birthday, p.email, p.phone_number, p.address, p.ssn, p.credit_score,
+               b.name as bank_name, b.location as bank_location, b.phone_number as bank_phone_number,
+               b.routing_number as bank_routing_number
         FROM loans l
         JOIN people p ON l.fk_person_id = p.person_id
         JOIN banks b ON l.fk_bank_id = b.bank_id

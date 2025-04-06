@@ -1,11 +1,10 @@
 from server import app, conn
 from flask import request, jsonify, Response
 from queries.loan_queries import get_loan_query, insert_loan_query
-from datetime import datetime
 from typing import Optional
 
 class Loan:
-    def __init__(self, loan_id: int, loan_type: str, open_date: datetime, term_length: int, amount: float, status: str, interest_rate: float, fk_person_id: int, fk_bank_id: int, first_name: Optional[str] = None, last_name: Optional[str] = None, bank_name: Optional[str] = None):
+    def __init__(self, loan_id: int, loan_type: str, open_date: str, term_length: int, amount: float, status: str, interest_rate: float, fk_person_id: int, fk_bank_id: int, first_name: Optional[str] = None, last_name: Optional[str] = None, birthday: Optional[str] = None, email: Optional[str] = None, phone_number: Optional[str] = None, address: Optional[str] = None, ssn: Optional[str] = None, credit_score: Optional[int] = None, bank_name: Optional[str] = None, bank_location: Optional[str] = None, bank_phone_number: Optional[str] = None, bank_routing_number: Optional[str] = None):
         self.loan_id = loan_id
         self.loan_type = loan_type
         self.open_date = open_date
@@ -17,13 +16,22 @@ class Loan:
         self.fk_bank_id = fk_bank_id
         self.first_name = first_name
         self.last_name = last_name
+        self.birthday = birthday
+        self.email = email
+        self.phone_number = phone_number
+        self.address = address
+        self.ssn = ssn
+        self.credit_score = credit_score
         self.bank_name = bank_name
+        self.bank_location = bank_location
+        self.bank_phone_number = bank_phone_number
+        self.bank_routing_number = bank_routing_number
     
     def to_json(self) -> dict[str, str | int | float | None]:
         return {
             "loan_id": self.loan_id,
             "type": self.loan_type,
-            "open_date": self.open_date.strftime("%Y-%m-%d") if self.open_date else None,
+            "open_date": self.open_date,
             "term_length": self.term_length,
             "amount": self.amount,
             "status": self.status,
@@ -32,7 +40,16 @@ class Loan:
             "fk_bank_id": self.fk_bank_id,
             "first_name": self.first_name,
             "last_name": self.last_name,
-            "bank_name": self.bank_name
+            "birthday": self.birthday,
+            "email": self.email,
+            "phone_number": self.phone_number,
+            "address": self.address,
+            "ssn": self.ssn,
+            "credit_score": self.credit_score,
+            "bank_name": self.bank_name,
+            "bank_location": self.bank_location,
+            "bank_phone_number": self.bank_phone_number,
+            "bank_routing_number": self.bank_routing_number
         }
     
     def __repr__(self) -> str:
@@ -92,7 +109,16 @@ def get_loans() -> tuple[Response, int]:
             fk_bank_id=row[8],
             first_name=row[9],
             last_name=row[10],
-            bank_name=row[11]
+            birthday=row[11],
+            email=row[12],
+            phone_number=row[13],
+            address=row[14],
+            ssn=row[15],
+            credit_score=row[16],
+            bank_name=row[17],
+            bank_location=row[18],
+            bank_phone_number=row[19],
+            bank_routing_number=row[20]
         ))
     
     return jsonify({"loans": [loan.to_json() for loan in loans]}), 200

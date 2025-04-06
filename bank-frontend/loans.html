@@ -24,7 +24,15 @@
         table {
             margin: 20px auto;
             border-collapse: collapse;
+            max-width: 80%;
         }
+        
+        .table-container {
+            overflow-x: scroll;
+            margin: 0 auto;
+            max-width: 80%;
+        }
+        
         th, td {
             border: 1px solid gold;
             padding: 10px;
@@ -34,12 +42,51 @@
             background-color: #333;
         }
 
-        input {
+        input, select {
             margin: 4px;
             padding: 4px 8px;
             border: 1px solid gold;
             background-color: white;
             color: black;
+        }
+        
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            background-color: #C5A30F;
+            color: black;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background-color: gold;
+        }
+        
+        form {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid gold;
+        }
+        
+        .form-group {
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: gold;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -74,172 +121,145 @@
             <option value="asc">Low to High</option>
             <option value="desc">High to Low</option>
         </select>
-        <button id="search-button" onclick="searchLoans()">Search</button>
+        <button id="search-button">Search</button>
     </div>
 
-    <table id="loans-table">
-        <thead>
-            <tr>
-                <th>Loan ID</th>
-                <th>Type</th>
-                <th>Open Date</th>
-                <th>Term Length</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Interest Rate</th>
-                <th>Person ID</th>
-                <th>Bank ID</th>
-            </tr>
-        </thead>
-        <tbody id="loans-table-body"></tbody>
-    </table>
+    <div class="table-container">
+        <table id="loans-table">
+            <thead>
+                <tr>
+                    <th>Loan ID</th>
+                    <th>Type</th>
+                    <th>Open Date</th>
+                    <th>Term Length</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Interest Rate</th>
+                    <th>Person ID</th>
+                    <th>Bank ID</th>
+                </tr>
+            </thead>
+            <tbody id="loans-table-body"></tbody>
+        </table>
+    </div>
 
     <a href="index.html">← Back to Home</a>
 
+    <h2>Search Loans by Bank</h2>
+    <p>Scroll to the right to see all the columns.</p>
     <div id="loans-table-with-bank-join-controls">
         <input type="text" id="bank-name-input" placeholder="Search by bank name...">
-        <button id="search-button" onclick="searchLoansWithBankJoin()">Search</button>
+        <button id="bank-search-button">Search</button>
     </div>
 
-    <table id="loans-table-with-bank-join">
-        <thead>
-            <tr>
-                <th>Loan ID</th>
-                <th>Type</th>
-                <th>Open Date</th>
-                <th>Term Length</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Interest Rate</th>
-                <th>Person ID</th>
-                <th>Bank ID</th>
-                <th>Bank Name</th>
-                <th>Bank Routing Number</th>
-                <th>Bank Location</th>
-                <th>Bank Phone Number</th>
-            </tr>
-        </thead>
-        <tbody id="loans-table-with-bank-join-body"></tbody>
-    </table>
+    <div class="table-container">
+        <table id="loans-table-with-bank-join">
+            <thead>
+                <tr>
+                    <th>Loan ID</th>
+                    <th>Type</th>
+                    <th>Open Date</th>
+                    <th>Term Length</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Interest Rate</th>
+                    <th>Person ID</th>
+                    <th>Bank ID</th>
+                    <th>Bank Name</th>
+                    <th>Bank Routing Number</th>
+                    <th>Bank Location</th>
+                    <th>Bank Phone Number</th>
+                </tr>
+            </thead>
+            <tbody id="loans-table-with-bank-join-body"></tbody>
+        </table>
+    </div>
 
     <a href="index.html">← Back to Home</a>
 
+    <h2>Search Loans by Person</h2>
+    <p>Scroll to the right to see all the columns.</p>
     <div id="loans-table-with-person-join-controls">
         <input type="text" id="person-name-input" placeholder="Search by person name...">
-        <button id="search-button" onclick="searchLoansWithPersonJoin()">Search</button>
+        <button id="person-search-button">Search</button>
     </div>
 
-    <table id="loans-table-with-person-join">
-        <thead>
-            <tr>
-                <th>Loan ID</th>
-                <th>Type</th>
-                <th>Open Date</th>
-                <th>Term Length</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Interest Rate</th>
-                <th>Person ID</th>
-                <th>Bank ID</th>
-                <th>Person First Name</th>
-                <th>Person Last Name</th>
-                <th>Person Birthday</th>
-                <th>Person Email</th>
-                <th>Person Phone Number</th>
-                <th>Person Address</th>
-                <th>Person SSN</th>
-                <th>Person Credit Score</th>
-            </tr>
-        </thead>
-        <tbody id="loans-table-with-person-join-body"></tbody>
-    </table>
+    <div class="table-container">
+        <table id="loans-table-with-person-join">
+            <thead>
+                <tr>
+                    <th>Loan ID</th>
+                    <th>Type</th>
+                    <th>Open Date</th>
+                    <th>Term Length</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Interest Rate</th>
+                    <th>Person ID</th>
+                    <th>Bank ID</th>
+                    <th>Person First Name</th>
+                    <th>Person Last Name</th>
+                    <th>Person Birthday</th>
+                    <th>Person Email</th>
+                    <th>Person Phone Number</th>
+                    <th>Person Address</th>
+                    <th>Person SSN</th>
+                    <th>Person Credit Score</th>
+                </tr>
+            </thead>
+            <tbody id="loans-table-with-person-join-body"></tbody>
+        </table>
+    </div>
+
+    <h2>Add New Loan</h2>
+    <form id="add-loan-form">
+        <div class="form-group">
+            <label for="new-loan-type">Loan Type:</label>
+            <select id="new-loan-type" required>
+                <option value="">Select Type</option>
+                <option value="auto">Auto</option>
+                <option value="mortgage">Mortgage</option>
+                <option value="personal">Personal</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="new-loan-open-date">Open Date:</label>
+            <input type="date" id="new-loan-open-date" required>
+        </div>
+        <div class="form-group">
+            <label for="new-loan-term-length">Term Length (months):</label>
+            <input type="number" id="new-loan-term-length" required>
+        </div>
+        <div class="form-group">
+            <label for="new-loan-amount">Amount ($):</label>
+            <input type="number" id="new-loan-amount" step="0.01" required>
+        </div>
+        <div class="form-group">
+            <label for="new-loan-status">Status:</label>
+            <select id="new-loan-status" required>
+                <option value="">Select Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="denied">Denied</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="new-loan-interest-rate">Interest Rate (%):</label>
+            <input type="number" id="new-loan-interest-rate" step="0.01" required>
+        </div>
+        <div class="form-group">
+            <label for="new-loan-person-id">Person ID:</label>
+            <input type="number" id="new-loan-person-id" required>
+        </div>
+        <div class="form-group">
+            <label for="new-loan-bank-id">Bank ID:</label>
+            <input type="number" id="new-loan-bank-id" required>
+        </div>
+        <button type="submit">Add Loan</button>
+    </form>
 
     <a href="index.html">← Back to Home</a>
 
-    <script>
-        function searchLoans() {
-            const status = document.getElementById("status-filter").value;
-            const loanType = document.getElementById("loan-type-filter").value;
-            const interestRate = document.getElementById("interest-rate-filter").value;
-            const sort = document.getElementById("sort-amount").value;
-
-            fetch(`http://localhost:8000/loans?status=${status}&type=${loanType}&interest_rate=${interestRate}&sort=${sort}`)
-                .then(response => response.json())
-                .then(data => {
-                    const tableBody = document.getElementById("loans-table-body");
-                    tableBody.innerHTML = "";
-
-                    data.loans.forEach(loan => {
-                        const row = document.createElement("tr");
-                        row.innerHTML = `
-                            <td>${loan.loan_id}</td>
-                            <td>${loan.type}</td>
-                            <td>${loan.open_date}</td>
-                            <td>${loan.term_length}</td>
-                            <td>$${loan.amount.toFixed(2)}</td>
-                            <td>${loan.status}</td>
-                            <td>${loan.interest_rate}%</td>
-                            <td>${loan.person_id}</td>
-                            <td>${loan.bank_id}</td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
-                })
-                .catch(error => {
-                    console.error("Error fetching loans:", error);
-                    alert("Failed to fetch loans");
-                });
-        }
-
-        function searchLoansWithBankJoin() {
-            const bankName = document.getElementById("bank-name-input").value;
-            fetch(`http://localhost:8000/loans?bank_name=${bankName}`)
-                .then(response => response.json())
-                .then(data => {
-                    const tableBody = document.getElementById("loans-table-with-bank-join-body");
-                    tableBody.innerHTML = "";
-
-                    data.loans.forEach(loan => {
-                        const row = document.createElement("tr");
-                        row.innerHTML = `
-                            <td>${loan.loan_id}</td>
-                        `;  
-                        tableBody.appendChild(row);
-                    });
-                })
-                .catch(error => {
-                    console.error("Error fetching loans with bank join:", error);
-                    alert("Failed to fetch loans with bank join");  
-                });
-        }
-
-        function searchLoansWithPersonJoin() {
-            const personName = document.getElementById("person-name-input").value;
-            fetch(`http://localhost:8000/loans?person_name=${personName}`)  
-                .then(response => response.json())      
-                .then(data => {
-                    const tableBody = document.getElementById("loans-table-with-person-join-body");
-                    tableBody.innerHTML = "";
-
-                    data.loans.forEach(loan => {    
-                        const row = document.createElement("tr");
-                        row.innerHTML = `
-                            <td>${loan.loan_id}</td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
-                })  
-                .catch(error => {
-                    console.error("Error fetching loans with person join:", error);
-                    alert("Failed to fetch loans with person join");
-                });
-        }
-        
-        document.body.onload = () => {
-            searchLoans();
-            searchLoansWithBankJoin();
-            searchLoansWithPersonJoin();
-        };
-    </script>
+    <script src="src/loans.js"></script>
 </body>
 </html>
