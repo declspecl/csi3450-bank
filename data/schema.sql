@@ -51,5 +51,9 @@ CREATE TABLE IF NOT EXISTS loans (
     fk_bank_id INTEGER NOT NULL REFERENCES banks(bank_id)
 );
 
---allows auto incrementing of the primary key in people table to start from the max id in the table
+--allows auto incrementing of the primary key in tables to start from the max id in the table
 SELECT setval('people_person_id_seq', (SELECT MAX(person_id) FROM people));
+SELECT setval('banks_bank_id_seq', (SELECT MAX(bank_id) FROM banks));
+SELECT setval('accounts_account_id_seq', (SELECT MAX(account_id) FROM accounts));
+SELECT setval('transactions_transaction_id_seq', (SELECT MAX(transaction_id) FROM transactions));
+SELECT setval('loans_loan_id_seq', (SELECT MAX(loan_id) FROM loans));
