@@ -88,6 +88,31 @@
             padding: 8px;
             box-sizing: border-box;
         }
+        
+        .filter-controls {
+            margin: 15px auto;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid gold;
+            border-radius: 5px;
+            max-width: 90%;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .filter-controls select, 
+        .filter-controls input {
+            margin: 5px;
+            min-width: 120px;
+        }
+        
+        .filter-controls button {
+            margin: 5px 10px;
+            min-width: 80px;
+        }
     </style>
 </head>
 <body>
@@ -98,30 +123,31 @@
     <b>Reason: You once played League of Legends — that's a financial red flag.</b>
     <a href="index.html">← Back to Home</a>
 
-    <div id="loans-table-controls">
-        <select id="status-filter">
+    <h2>All Loans</h2>
+    <div id="loans-table-controls" class="filter-controls">
+        <select id="status-filter-main" class="status-filter">
             <option value="">All Statuses</option>
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
             <option value="denied">Denied</option>
         </select>
-        <select id="loan-type-filter">
+        <select id="loan-type-filter-main" class="loan-type-filter">
             <option value="">All Types</option>
             <option value="auto">Auto</option>
             <option value="mortgage">Mortgage</option>
             <option value="personal">Personal</option>
         </select>
-        <select id="interest-rate-filter">
+        <select id="interest-rate-filter-main" class="interest-rate-filter">
             <option value="">All Rates</option>
             <option value="high">High (>10%)</option>
             <option value="low">Low (≤10%)</option>
         </select>
-        <select id="sort-amount">
+        <select id="sort-amount-main" class="sort-amount">
             <option value="">Sort by Amount</option>
             <option value="asc">Low to High</option>
             <option value="desc">High to Low</option>
         </select>
-        <button id="search-button">Search</button>
+        <button id="search-button-main" class="search-button">Search</button>
     </div>
 
     <div class="table-container">
@@ -147,9 +173,31 @@
 
     <h2>Search Loans by Bank</h2>
     <p>Scroll to the right to see all the columns.</p>
-    <div id="loans-table-with-bank-join-controls">
+    <div id="loans-table-with-bank-join-controls" class="filter-controls">
+        <select id="status-filter-bank" class="status-filter">
+            <option value="">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="denied">Denied</option>
+        </select>
+        <select id="loan-type-filter-bank" class="loan-type-filter">
+            <option value="">All Types</option>
+            <option value="auto">Auto</option>
+            <option value="mortgage">Mortgage</option>
+            <option value="personal">Personal</option>
+        </select>
+        <select id="interest-rate-filter-bank" class="interest-rate-filter">
+            <option value="">All Rates</option>
+            <option value="high">High (>10%)</option>
+            <option value="low">Low (≤10%)</option>
+        </select>
+        <select id="sort-amount-bank" class="sort-amount">
+            <option value="">Sort by Amount</option>
+            <option value="asc">Low to High</option>
+            <option value="desc">High to Low</option>
+        </select>
         <input type="text" id="bank-name-input" placeholder="Search by bank name...">
-        <button id="bank-search-button">Search</button>
+        <button id="search-button-bank" class="search-button">Search</button>
     </div>
 
     <div class="table-container">
@@ -179,9 +227,31 @@
 
     <h2>Search Loans by Person</h2>
     <p>Scroll to the right to see all the columns.</p>
-    <div id="loans-table-with-person-join-controls">
+    <div id="loans-table-with-person-join-controls" class="filter-controls">
+        <select id="status-filter-person" class="status-filter">
+            <option value="">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="denied">Denied</option>
+        </select>
+        <select id="loan-type-filter-person" class="loan-type-filter">
+            <option value="">All Types</option>
+            <option value="auto">Auto</option>
+            <option value="mortgage">Mortgage</option>
+            <option value="personal">Personal</option>
+        </select>
+        <select id="interest-rate-filter-person" class="interest-rate-filter">
+            <option value="">All Rates</option>
+            <option value="high">High (>10%)</option>
+            <option value="low">Low (≤10%)</option>
+        </select>
+        <select id="sort-amount-person" class="sort-amount">
+            <option value="">Sort by Amount</option>
+            <option value="asc">Low to High</option>
+            <option value="desc">High to Low</option>
+        </select>
         <input type="text" id="person-name-input" placeholder="Search by person name...">
-        <button id="person-search-button">Search</button>
+        <button id="search-button-person" class="search-button">Search</button>
     </div>
 
     <div class="table-container">

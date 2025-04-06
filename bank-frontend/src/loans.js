@@ -1,7 +1,15 @@
-// Global variables for pagination
 let currentPage = 1;
 const pageSize = 15;
 let totalLoans = 0;
+
+const filterState = {
+    status: "",
+    loanType: "",
+    interestRateFilter: "",
+    sortAmount: "",
+    bankName: "",
+    personName: ""
+};
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchLoans();
@@ -9,11 +17,86 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function setupEventListeners() {
-    document.getElementById("search-button").addEventListener("click", applyFilters);
+    const statusSelectors = document.querySelectorAll('.status-filter');
+    const loanTypeSelectors = document.querySelectorAll('.loan-type-filter');
+    const interestRateSelectors = document.querySelectorAll('.interest-rate-filter');
+    const sortAmountSelectors = document.querySelectorAll('.sort-amount');
+    const searchButtons = document.querySelectorAll('.search-button');
+    
+    statusSelectors.forEach(selector => {
+        selector.addEventListener('change', function() {
+            filterState.status = this.value;
+            syncFilters('status', this.value);
+        });
+    });
+    
+    loanTypeSelectors.forEach(selector => {
+        selector.addEventListener('change', function() {
+            filterState.loanType = this.value;
+            syncFilters('loanType', this.value);
+        });
+    });
+    
+    interestRateSelectors.forEach(selector => {
+        selector.addEventListener('change', function() {
+            filterState.interestRateFilter = this.value;
+            syncFilters('interestRateFilter', this.value);
+        });
+    });
+    
+    sortAmountSelectors.forEach(selector => {
+        selector.addEventListener('change', function() {
+            filterState.sortAmount = this.value;
+            syncFilters('sortAmount', this.value);
+        });
+    });
+    
+    const bankNameInput = document.getElementById('bank-name-input');
+    if (bankNameInput) {
+        bankNameInput.addEventListener('input', function() {
+            filterState.bankName = this.value;
+        });
+    }
+    
+    const personNameInput = document.getElementById('person-name-input');
+    if (personNameInput) {
+        personNameInput.addEventListener('input', function() {
+            filterState.personName = this.value;
+        });
+    }
+    
+    searchButtons.forEach(button => {
+        button.addEventListener('click', applyFilters);
+    });
     
     const addLoanForm = document.getElementById("add-loan-form");
     if (addLoanForm) {
         addLoanForm.addEventListener("submit", submitNewLoan);
+    }
+}
+
+function syncFilters(filterType, value) {
+    let selectorClass = '';
+    
+    switch(filterType) {
+        case 'status':
+            selectorClass = '.status-filter';
+            break;
+        case 'loanType':
+            selectorClass = '.loan-type-filter';
+            break;
+        case 'interestRateFilter':
+            selectorClass = '.interest-rate-filter';
+            break;
+        case 'sortAmount':
+            selectorClass = '.sort-amount';
+            break;
+    }
+    
+    if (selectorClass) {
+        document.querySelectorAll(selectorClass).forEach(selector => {
+            selector.value = value;
+        });
     }
 }
 
@@ -23,26 +106,24 @@ function applyFilters() {
 }
 
 function fetchLoans() {
-    const status = document.getElementById("status-filter").value;
-    const loanType = document.getElementById("loan-type-filter").value;
-    const interestRateFilter = document.getElementById("interest-rate-filter").value;
-    const sortAmount = document.getElementById("sort-amount").value;
-    
     const url = new URL("http://localhost:8000/loans");
     
-    if (status) url.searchParams.append("status", status);
-    if (loanType) url.searchParams.append("loan_type", loanType);
+    if (filterState.status) url.searchParams.append("status", filterState.status);
+    if (filterState.loanType) url.searchParams.append("loan_type", filterState.loanType);
     
-    if (interestRateFilter === "high") {
+    if (filterState.interestRateFilter === "high") {
         url.searchParams.append("min_interest_rate", "10");
-    } else if (interestRateFilter === "low") {
+    } else if (filterState.interestRateFilter === "low") {
         url.searchParams.append("max_interest_rate", "10");
     }
     
-    if (sortAmount) {
+    if (filterState.sortAmount) {
         url.searchParams.append("sort_by_amount", "true");
-        url.searchParams.append("sort_order", sortAmount);
+        url.searchParams.append("sort_order", filterState.sortAmount);
     }
+    
+    if (filterState.bankName) url.searchParams.append("bank_name", filterState.bankName);
+    if (filterState.personName) url.searchParams.append("name", filterState.personName);
     
     fetch(url)
         .then(response => {
@@ -78,7 +159,7 @@ function renderLoansTable(loans) {
         row.innerHTML = `
             <td>${loan.loan_id}</td>
             <td>${loan.type}</td>
-            <td>${loan.open_date || 'N/A'}</td>
+            <td>${loan.open_date}</td>
             <td>${loan.term_length}</td>
             <td>$${parseFloat(loan.amount).toFixed(2)}</td>
             <td>${loan.status}</td>
@@ -106,7 +187,7 @@ function renderLoansWithBankTable(loans) {
         row.innerHTML = `
             <td>${loan.loan_id}</td>
             <td>${loan.type}</td>
-            <td>${loan.open_date || 'N/A'}</td>
+            <td>${loan.open_date}</td>
             <td>${loan.term_length}</td>
             <td>$${parseFloat(loan.amount).toFixed(2)}</td>
             <td>${loan.status}</td>
@@ -138,7 +219,7 @@ function renderLoansWithPersonTable(loans) {
         row.innerHTML = `
             <td>${loan.loan_id}</td>
             <td>${loan.type}</td>
-            <td>${loan.open_date || 'N/A'}</td>
+            <td>${loan.open_date}</td>
             <td>${loan.term_length}</td>
             <td>$${parseFloat(loan.amount).toFixed(2)}</td>
             <td>${loan.status}</td>
