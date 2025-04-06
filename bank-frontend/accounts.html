@@ -83,6 +83,8 @@
     <button onclick="submitNewAccount()" class="action-btn" style="margin-top: 15px;">💰 Add Account</button>
   </div>
 
+  <a href="index.html">← Back to Home</a>
+
   <!-- Table Container -->
   <div id="account-table-container">
     <p>Loading accounts...</p>
@@ -105,118 +107,3 @@
 </a>
 
 </html>
-
-
-
-<!-- Stin -commenting out for reference so i can build the new one with pagination and such, keeping for reference -->
-<!-- accounts.html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <title>Accounts</title>
-    <style>
-        body {
-            background: linear-gradient(to right, #000000, #C5A30F);
-            color: gold;
-            font-family: "Comic Sans MS", cursive;
-            text-align: center;
-            padding-top: 100px;
-        }
-
-        h1 {
-            font-size: 36px;
-            text-shadow: 2px 2px 4px black;
-        }
-
-        p {
-            font-size: 20px;
-            color: white;
-            text-shadow: 1px 1px 2px black;
-        }
-
-        b {
-            font-size: 16px;
-            color: white;
-            text-shadow: 1px 1px 2px black;
-        }
-
-        a {
-            color: gold;
-            display: block;
-            margin-top: 40px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-        
-        .filter-container {
-            margin: 20px auto;
-            text-align: center;
-        }
-        .filter-container input, .filter-container select, .filter-container button {
-            margin: 5px;
-            padding: 10px;
-            font-size: 16px;
-        }
-        .account-table {
-            margin: 20px auto;
-            border-collapse: collapse;
-            width: 80%;
-        }
-        .account-table th, .account-table td {
-            border: 1px solid gold;
-            padding: 10px;
-            color: white;
-        }
-        .account-table th {
-            background-color: #333;
-        }
-    </style>
-</head>
-<body>
-    <h1>Accounts</h1>
-    <p>This is the Accounts page. Eventually, it will display and let you interact with the Accounts table.</p>
-    <p>Unless you want Austin's Marvel Rivals match history, please go back to the Home Page below.</p>
-    <b>He is a Spiderman abuser... </b>
-    
-    <div class="filter-container">
-        <input type="text" id="searchAccounts" placeholder="Search accounts...">
-        <input type="text" id="filterName" placeholder="Filter by Person Name">
-        <select id="filterType">
-            <option value="">Filter by Type</option>
-            <option value="Savings">Savings</option>
-            <option value="Checking">Checking</option>
-        </select>
-        <select id="filterStatus">
-            <option value="">Filter by Status</option>
-            <option value="Active">Active</option>
-            <option value="Closed">Closed</option>
-        </select>
-        <button onclick="sortByBalance()">Sort by Balance</button>
-    </div>
-
-    <table class="account-table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Account Type</th>
-                <th>Status</th>
-                <th>Balance</th>
-            </tr>
-        </thead>
-        <tbody id="accountTableBody">
-        </tbody>
-    </table>
-    <a href="index.html">← Back to Home</a>
-    
-    <script>
-        
-    </script>
-</body>
-</html>
--->

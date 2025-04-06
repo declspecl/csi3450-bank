@@ -2,8 +2,6 @@ let currentPage = 1;
 const itemsPerPage = 50; //50 people per page, since its the table page want to show mass data
 let totalPages = 1; // This should be dynamically set based on the total number of items
 
-
-//NEW CODE FOR PAGINATION
 function fetchPeople(page) {
     fetch(`http://localhost:8000/people?page=${page}&page_size=${itemsPerPage}`)
       .then(res => {
@@ -54,9 +52,8 @@ function fetchPeople(page) {
         // This is assuming your backend returns total_count in the response
         if (data.total_count !== undefined) {
           totalPages = Math.ceil(data.total_count / itemsPerPage);
+          renderPagination(); // Call the function to render pagination after fetching data
         }
-  
-        renderPagination(); // Call the function to render pagination after fetching data
       })
       .catch(err => {
         const container = document.getElementById('people-table-container');
@@ -120,19 +117,20 @@ function renderPagination(){
         btn.onclick = () => {
             currentPage = i;
             fetchPeople(currentPage);
+            renderPeopleTable(people);
         };
             if(i === currentPage){
                 btn.style.fontWeight = 'bold';
                 btn.style.backgroundColor = '#C5A30F';
                 btn.style.color = '#000';
         }
-    paginationContainer.appendChild(btn);
 
-    }   
+        paginationContainer.appendChild(btn);
+    }
+
+    container.ineerHTML = "";
     container.appendChild(paginationContainer);
-
 }
+
 //IMPORTANT: Call fetchPeople function to load the initial data
 fetchPeople(currentPage);
-
-

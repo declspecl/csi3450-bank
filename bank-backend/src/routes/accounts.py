@@ -40,13 +40,17 @@ def get_accounts() -> tuple[Response, int]:
     account_type = request.args.get("account_type")
     status = request.args.get("status")
     sort_by_balance = request.args.get("sort_by_balance")
+    page = request.args.get("page")
+    page_size = request.args.get("page_size")
 
     query, params = get_account_query(
         first_name = first_name,
         last_name = last_name,
         account_type = account_type,
         status = status,
-        sort_by_balance = bool(sort_by_balance)
+        sort_by_balance = bool(sort_by_balance),
+        page = int(page) if page else None,
+        page_size = int(page_size) if page_size else None
     )
 
     try:

@@ -6,6 +6,8 @@ class GetAccountQueryParams(TypedDict):
     account_type: Optional[str]
     status: Optional[str]
     sort_by_balance: Optional[bool]
+    page: Optional[int]
+    page_size: Optional[int]
 
 def get_account_query(**kwargs: Unpack[GetAccountQueryParams]) -> tuple[str, tuple[str, ...]]:
     """
@@ -17,6 +19,8 @@ def get_account_query(**kwargs: Unpack[GetAccountQueryParams]) -> tuple[str, tup
     account_type = kwargs.get("account_type") 
     status = kwargs.get("status")
     sort_by_balance = kwargs.get("sort_by_balance", False)
+    page = kwargs.get("page", 1)
+    page_size = kwargs.get("page_size", 15)
 
     query = "SELECT * FROM accounts WHERE 1=1"
     params: list[str] = []
@@ -35,6 +39,9 @@ def get_account_query(**kwargs: Unpack[GetAccountQueryParams]) -> tuple[str, tup
         params.append(f"%{status}%")
     if sort_by_balance:
         query += " ORDER BY balance DESC"
+    if page and page_size:
+        offset = (page - 1) * page_size
+        query += f" LIMIT {page_size} OFFSET {offset}"
 
     return query, tuple(params)
 

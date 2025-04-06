@@ -1,17 +1,7 @@
-//New code can be split into 3 sections:
-// function to fetch people data from the server
-// function to render the people table
-// function to render pagination controls
-// you will need to update backend to support pagination
-// and sorting
-
-
-//constraints for pagination
 let currentPage = 1;
 const itemsPerPage = 15;
-let totalPages = 1; // This should be dynamically set based on the total number of items
+let totalPages = 1;
 
-//function for fetching people data from the server
 function fetchPeople() {
   const firstName = document.getElementById("search-first-name").value;
   const lastName = document.getElementById("search-last-name").value;
@@ -89,7 +79,6 @@ function renderPeopleTable(people) {
   container.appendChild(table);
 }
 
-//pagination function to render pagination controls
 function renderPagination() {
   const container = document.getElementById('pagination-controls');
   container.innerHTML = '';
