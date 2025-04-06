@@ -3,26 +3,26 @@ from flask import request, jsonify, Response
 from queries.transaction_queries import get_transaction_query, insert_transaction_query
 
 class Transaction:
-    def __init__(self, transaction_id: int, fk_sender_id: str, fk_recipient_id: str, status: str, amount: float, transaction_date: str):
+    def __init__(self, transaction_id: int, amount: float, transaction_date: str, status: str, fk_sender_id: int, fk_recipient_id: int):
         self.transaction_id = transaction_id
-        self.sender = fk_sender_id
-        self.recipient = fk_recipient_id
-        self.status = status
         self.amount = amount
-        self.date = transaction_date
+        self.transaction_date = transaction_date
+        self.status = status
+        self.fk_sender_id = fk_sender_id
+        self.fk_recipient_id = fk_recipient_id
 
     def to_json(self) -> dict[str, str | float | int]:
         return {
             "transaction_id": self.transaction_id,
-            "sender": self.sender,
-            "recipient": self.recipient,
-            "status": self.status,
             "amount": self.amount,
-            "date": self.date
+            "transaction_date": self.transaction_date,
+            "status": self.status,
+            "fk_sender_id": self.fk_sender_id,
+            "fk_recipient_id": self.fk_recipient_id
         }
     
     def __repr__(self) -> str:
-        return f"Transaction(transaction_id={self.transaction_id}, sender={self.sender}, recipient={self.recipient}, status={self.status}, amount={self.amount}, date={self.date})"
+        return f"Transaction(transaction_id={self.transaction_id}, amount={self.amount}, transaction_date={self.transaction_date}, status={self.status}, fk_sender_id={self.fk_sender_id}, fk_recipient_id={self.fk_recipient_id})"
 
 @app.route("/transactions", methods=["GET"])
 def get_transactions() -> tuple[Response, int]:
@@ -54,6 +54,7 @@ def get_transactions() -> tuple[Response, int]:
 
     transactions: list[Transaction] = []
     for row in transaction_rows:
+        print(row)
         transactions.append(Transaction(
             row[0],
             row[1],

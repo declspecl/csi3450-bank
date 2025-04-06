@@ -22,7 +22,7 @@ def get_transaction_query(**kwargs: Unpack[GetTransactionQueryParams]) -> tuple[
         params.append(f"%{status}%")
     if sort_by_amount:
         query += " ORDER BY amount DESC"
-    if recent:
+    elif recent:
         query += " ORDER BY transaction_date DESC"
 
     return query, tuple(params)

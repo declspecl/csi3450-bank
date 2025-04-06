@@ -55,31 +55,28 @@
     <a href="index.html">← Back to Home</a>
     
     <div class="filter-container">
-        <input type="text" id="searchTransactions" placeholder="Search transactions...">
-        <input type="text" id="filterSender" placeholder="Filter by Sender">
-        <input type="text" id="filterRecipient" placeholder="Filter by Recipient">
-        <input type="text" id="filterAccount" placeholder="Filter by Account Number">
         <select id="filterStatus">
             <option value="">Filter by Status</option>
             <option value="Pending">Pending</option>
             <option value="Completed">Completed</option>
             <option value="Failed">Failed</option>
         </select>
-        <select id="filterRecent">
-            <option value="">Filter Recent Transactions</option>
-            <option value="7">Last 7 days</option>
-            <option value="30">Last 30 days</option>
+        <select id="sortBy">
+            <option value="">Sort by</option>
+            <option value="date">Date</option>
+            <option value="amount">Amount</option>
         </select>
-        <button onclick="sortByAmount()">Sort by Amount</button>
+        <button onclick="fetchTransactions()">Search and apply filters</button>
     </div>
 
     <table class="transaction-table">
         <thead>
             <tr>
-                <th>Sender</th>
-                <th>Recipient</th>
-                <th>Status</th>
+                <th>Transaction ID</th>
                 <th>Amount</th>
+                <th>Sender ID</th>
+                <th>Recipient ID</th>
+                <th>Status</th>
                 <th>Date</th>
             </tr>
         </thead>
@@ -88,5 +85,7 @@
     </table>
 
     <a href="index.html">← Back to Home</a>
+
+    <script src="./src/transactions.js"></script>
 </body>
 </html>
