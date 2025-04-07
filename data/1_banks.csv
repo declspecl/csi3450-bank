@@ -9,3 +9,23 @@ bank_id,name,routing_number,location,phone_number
 8,US Bank,147258369,"Minneapolis, MN",(612) 555-0123
 9,SunTrust,963852741,"Atlanta, GA",(404) 555-4567
 10,Fifth Third Bank,852741963,"Cincinnati, OH",(513) 555-8901
+11,KeyBank,741852963,"Cleveland, OH",(216) 555-2345
+12,Regions Bank,369852147,"Birmingham, AL",(205) 555-6789
+13,M&T Bank,582147963,"Buffalo, NY",(716) 555-0123
+14,Citizens Bank,471258369,"Providence, RI",(401) 555-4567
+15,BMO Harris Bank,258741963,"Chicago, IL",(312) 555-8901
+16,First Republic Bank,852369741,"San Francisco, CA",(415) 555-2345
+17,HSBC Bank,147369852,"New York, NY",(212) 555-6789
+18,BBVA Compass,963258741,"Birmingham, AL",(205) 555-0123
+19,Ally Bank,369741852,"Detroit, MI",(313) 555-4567
+20,Santander Bank,741963258,"Boston, MA",(617) 555-8901
+21,Silicon Valley Bank,258963741,"San Jose, CA",(408) 555-2345
+22,First Citizens Bank,963147852,"Raleigh, NC",(919) 555-6789
+23,Bank of the West,147852963,"San Francisco, CA",(415) 555-0123
+24,East West Bank,741369852,"Pasadena, CA",(626) 555-4567
+25,Huntington Bank,258741369,"Columbus, OH",(614) 555-8901
+26,New York Community Bank,961738245,"Westbury, NY",(516) 555-2345
+27,Synovus Bank,437219586,"Columbus, GA",(706) 555-6789
+28,People's United Bank,192583467,"Bridgeport, CT",(203) 555-0123
+29,First Horizon Bank,546821973,"Memphis, TN",(901) 555-4567
+30,Associated Bank,867243591,"Green Bay, WI",(920) 555-8901
