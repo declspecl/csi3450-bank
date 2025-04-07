@@ -1,6 +1,6 @@
 from server import app, conn
 from flask import request, jsonify, Response
-from queries.loan_queries import get_loan_query, insert_loan_query
+from queries.loan_queries import get_paginated_loan_query, insert_loan_query, get_paginated_loan_with_bank_query
 from typing import Optional
 
 class Loan:
@@ -55,73 +55,134 @@ class Loan:
     def __repr__(self) -> str:
         return f"Loan(loan_id={self.loan_id}, type={self.loan_type}, amount={self.amount}, status={self.status})"
 
+from queries.loan_queries import get_paginated_loan_query, get_paginated_loan_with_bank_query
+
 @app.route("/loans", methods=["GET"])
 def get_loans() -> tuple[Response, int]:
-    """
-    Handles GET requests to retrieve loans based on provided parameters.
-    Supports filtering by status, person name, bank, interest rate ranges, and loan type.
-    Also supports sorting by amount.
-    """
     cursor = conn.cursor()
-    
+
+    # Extract shared query parameters
     status = request.args.get("status")
-    name = request.args.get("name")
-    bank_id = request.args.get("bank_id")
-    min_interest_rate = request.args.get("min_interest_rate")
-    max_interest_rate = request.args.get("max_interest_rate")
+    first_name = request.args.get("first_name")
+    last_name = request.args.get("last_name")
+    bank_name = request.args.get("bank_name")
+    bank_id = request.args.get("bank_id", type=int)
+    min_rate = request.args.get("min_interest_rate", type=float)
+    max_rate = request.args.get("max_interest_rate", type=float)
     loan_type = request.args.get("loan_type")
-    sort_by_amount = request.args.get("sort_by_amount")
-    sort_order = request.args.get("sort_order")
+    sort_by = request.args.get("sort_by")
+    sort_order = request.args.get("sort_order", default="ASC")
+    page = request.args.get("page", default=1, type=int)
+    page_size = request.args.get("page_size", default=15, type=int)
+    limit = page_size
+    offset = (page - 1) * page_size
     
-    query, params = get_loan_query(
-        status=status,
-        name=name,
-        bank_id=int(bank_id) if bank_id else None,
-        min_interest_rate=float(min_interest_rate) if min_interest_rate else None,
-        max_interest_rate=float(max_interest_rate) if max_interest_rate else None,
-        loan_type=loan_type,
-        sort_by_amount=bool(sort_by_amount),
-        sort_order=sort_order
-    )
     
+    bank_name = request.args.get("bank_name")
+    bank_location = request.args.get("bank_location")
+    bank_phone = request.args.get("bank_phone")
+
+
+    join_type = request.args.get("join")
+
     try:
+        if join_type == "bank":
+            # Use the bank-join-specific query
+            query, params = get_paginated_loan_with_bank_query(
+                status=status,
+                bank_name=bank_name,
+                loan_type=loan_type,
+                min_interest_rate=min_rate,
+                max_interest_rate=max_rate,
+                bank_phone=bank_phone,
+                bank_location=bank_location,
+                sort_by=sort_by,
+                sort_order=sort_order,
+                limit=limit,
+                offset=offset
+            )
+        else:
+            # Default to the normal loan query
+            query, params = get_paginated_loan_query(
+                status=status,
+                first_name=first_name,
+                last_name=last_name,
+                bank_id=bank_id,
+                min_interest_rate=min_rate,
+                max_interest_rate=max_rate,
+                loan_type=loan_type,
+                sort_by=sort_by,
+                sort_order=sort_order,
+                limit=limit,
+                offset=offset
+            )
+
         cursor.execute(query, params)
         loan_rows = cursor.fetchall()
         conn.commit()
     except Exception as e:
-        print(f"Error executing query: {e}")
+        print(f"Error executing loan query: {e}")
         conn.rollback()
         return jsonify({"error": "Failed to retrieve loans"}), 500
     finally:
         cursor.close()
-    
-    loans: list[Loan] = []
-    for row in loan_rows:
-        loans.append(Loan(
-            loan_id=row[0],
-            loan_type=row[1],
-            open_date=row[2],
-            term_length=row[3],
-            amount=row[4],
-            status=row[5],
-            interest_rate=row[6],
-            fk_person_id=row[7],
-            fk_bank_id=row[8],
-            first_name=row[9],
-            last_name=row[10],
-            birthday=row[11],
-            email=row[12],
-            phone_number=row[13],
-            address=row[14],
-            ssn=row[15],
-            credit_score=row[16],
-            bank_name=row[17],
-            bank_location=row[18],
-            bank_phone_number=row[19],
-            bank_routing_number=row[20]
-        ))
-    
-    return jsonify({"loans": [loan.to_json() for loan in loans]}), 200
+
+    # ✅ Count query for total rows matching the filters
+    count_cursor = conn.cursor()
+    try:
+        count_query = """
+            SELECT COUNT(*)
+            FROM loans l
+            JOIN people p ON l.fk_person_id = p.person_id
+            JOIN banks b ON l.fk_bank_id = b.bank_id
+            WHERE 1=1
+        """
+        count_params = []
+
+        if status:
+            count_query += " AND l.status ILIKE %s"
+            count_params.append(f"%{status}%")
+        if first_name:
+            query += " AND p.first_name ILIKE %s"
+            params.append(f"%{first_name}%")
+
+        if last_name:   
+            query += " AND p.last_name ILIKE %s"
+            params.append(f"%{last_name}%")
+        if bank_name:
+            count_query += " AND b.name ILIKE %s"
+            count_params.append(f"%{bank_name}%")
+        if bank_location:
+            count_query += " AND b.location ILIKE %s"
+            count_params.append(f"%{bank_location}%")
+        if bank_phone:
+            count_query += " AND b.phone_number ILIKE %s"
+            count_params.append(f"%{bank_phone}%")
+        if bank_id:
+            count_query += " AND l.fk_bank_id = %s"
+            count_params.append(bank_id)
+        if loan_type:
+            count_query += " AND l.type ILIKE %s"
+            count_params.append(f"%{loan_type}%")
+        if min_rate is not None:
+            count_query += " AND l.interest_rate >= %s"
+            count_params.append(min_rate)
+        if max_rate is not None:
+            count_query += " AND l.interest_rate <= %s"
+            count_params.append(max_rate)
+
+        count_cursor.execute(count_query, count_params)
+        total_count = count_cursor.fetchone()[0]
+    except Exception as e:
+        print(f"Error counting total loans: {e}")
+        total_count = 0
+    finally:
+        count_cursor.close()
+
+    loans = [Loan(*row).to_json() for row in loan_rows]
+    return jsonify({"loans": loans, "total_count": total_count}), 200
+
+
 
 @app.route("/loans", methods=["POST"])
 def create_new_loan() -> tuple[Response, int]:

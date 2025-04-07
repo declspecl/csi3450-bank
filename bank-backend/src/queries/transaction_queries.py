@@ -1,29 +1,34 @@
 from typing import Optional, TypedDict, Unpack
 
+#UPDATING FOR PAGINATION AND SORTING
+
 class GetTransactionQueryParams(TypedDict):
     status: Optional[str]
     sort_by_amount: Optional[bool]
     recent: Optional[bool]
+    sort_order: Optional[str]
+    limit: Optional[int]
+    offset: Optional[int]
 
-def get_transaction_query(**kwargs: Unpack[GetTransactionQueryParams]) -> tuple[str, tuple[str | float | int, ...]]:
-    """
-    Retrieves transaction information based on the provided filters.
-    If no filters are provided, retrieves all transactions.
-    """
-    status = kwargs.get("status")
-    sort_by_amount = kwargs.get("sort_by_amount", False)
-    recent = kwargs.get("recent", False)
+def get_paginated_transaction_query(**kwargs: Unpack[GetTransactionQueryParams]) -> tuple[str, tuple[str | int]]:
 
     query = "SELECT * FROM transactions WHERE 1=1"
-    params: list[str | float | int] = []
+    params: list[str | int] = []
 
-    if status:
+    if kwargs.get("status"):
         query += " AND status ILIKE %s"
-        params.append(f"%{status}%")
-    if sort_by_amount:
-        query += " ORDER BY amount DESC"
-    elif recent:
-        query += " ORDER BY transaction_date DESC"
+        params.append(f"%{kwargs['status']}%")
+
+    valid_sort_fields = {"amount", "transaction_date", "transaction_id"}
+    sort_by = kwargs.get("sort_by")
+    sort_order = kwargs.get("sort_order", "ASC").upper()
+    if sort_by in valid_sort_fields:
+        if sort_order not in {"ASC", "DESC"}:
+            sort_order = "ASC"
+        query += f" ORDER BY {sort_by} {sort_order}"
+
+    query += " LIMIT %s OFFSET %s"
+    params.extend([kwargs["limit"], kwargs["offset"]])
 
     return query, tuple(params)
 

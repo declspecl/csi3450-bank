@@ -81,25 +81,25 @@
   </style>
 </head>
 <body>
-  <div style="margin-bottom: 40px;">
-    <h1>Loan Zone</h1>
-    <p>Analyze them. Filter them. Marvel at them. Welcome to the Loan Archives.</p>
-    <p>Just don’t look at Stin’s interest rate logic... it's concerning. 😬📉</p>
-    <b>He once defaulted... on his *sleep schedule* to write this.</b>
-  </div>
+  <h1>Loans by Bank</h1>
+  <p>This page lets you dive deep into loans by their associated banks.</p>
+  <p>Built by Stin. Not the fake Austin. The real one. 🕶️</p>
+  <b>Warning: May contain traces of Stin's caffeine-fueled logic.</b>
 
-  <!-- Toggle Buttons -->
-  <div class="toggle-buttons">
-    <button onclick="window.location.href='loans.html'">All Loans</button>
-    <button onclick="window.location.href='loans_by_bank.html'">Loans by Bank</button>
-    <button onclick="window.location.href='loans_by_person.html'">Loans by Person</button>
-  </div>
+    <!-- Toggle Buttons -->
+    <div class="toggle-buttons">
+        <button onclick="window.location.href='loans.html'">All Loans</button>
+        <button onclick="window.location.href='loans_by_bank.html'">Loans by Bank</button>
+        <button onclick="window.location.href='loans_by_person.html'">Loans by Person</button>
+      </div>
+    
 
   <!-- Filter Controls -->
   <div style="margin-bottom: 20px;">
     <input type="text" id="search-loan-type" placeholder="Loan Type (e.g. Auto)">
     <input type="text" id="search-loan-status" placeholder="Status (e.g. Active)">
-
+    <input type="text" id="search-bank-location" placeholder="Location (e.g. New York)">
+    <input type="text" id="search-bank-phone" placeholder="Phone (e.g. 212)">
 
     <select id="interest-rate">
       <option value="">All Rates</option>
@@ -121,13 +121,8 @@
     <button id="apply-loan-filters">Apply Filters</button>
   </div>
 
-
-
-
-
   <!-- Table Container -->
-
-<div id="loans-table-container">
+  <div class="table-container">
     <table>
       <thead>
         <tr>
@@ -140,29 +135,23 @@
           <th>Interest Rate</th>
           <th>Person ID</th>
           <th>Bank ID</th>
+          <th>Bank Name</th>
+          <th>Routing #</th>
+          <th>Location</th>
+          <th>Phone</th>
         </tr>
       </thead>
-      <tbody id="loans-table-body">
-        <tr><td colspan="9">Loading loans...</td></tr>
-      </tbody>
+      <tbody id="loans-table-with-bank-join-body"></tbody>
     </table>
   </div>
-  
 
-  <!-- Pagination Controls (just an empty div!) -->
-  <div id="pagination-controls" class="pagination" style="margin-top: 20px;"></div>
+  <!-- Pagination Controls -->
+
+<div id="pagination-controls" class="pagination" style="margin-top: 20px;"></div>
+
 
   <a href="index.html">← Back to Home</a>
 
-  <script src="src/loans.js"></script>
+  <script src="src/loans_by_bank.js"></script>
 </body>
-
-<b style="display:block; margin: 20px; font-size: 1.4rem; text-align: center; color: gold; text-shadow: 2px 2px 4px black; background-color: rgba(0, 0, 0, 0.7); padding: 15px; border-radius: 8px;">
-  FYI: Applying for a loan with Stin's financial record might result in a comical rejection. Proceed with humor. 😅
-</b>
-
-<a href="loans-table.html" style="display: block; font-weight: bold; font-size: 1.2rem; color: gold; text-align: center; text-shadow: 2px 2px 4px black; background-color: rgba(0, 0, 0, 0.7); text-decoration: none; margin-top: 20px;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
-  🧾 View Full Loan Dataset <span style="font-style: italic;">((Unlike Stin's credit score, this table makes sense.))</span>
-</a>
-
 </html>

@@ -1,9 +1,11 @@
 from server import app, conn
 from flask import request, jsonify, Response
-from queries.account_queries import get_account_query, insert_account_query
+from queries.account_queries import get_paginated_account_query, insert_account_query
 
 class Account:
-    def __init__(self, account_id: int, account_number: str, routing_number: str, account_type: str, balance: float, status: str, fk_person_id: int, fk_bank_id: int):
+    def __init__(self, account_id: int, account_number: str, routing_number: str,
+                 account_type: str, balance: float, status: str,
+                 fk_person_id: int, fk_bank_id: int, bank_name: str = None):
         self.account_id = account_id
         self.account_number = account_number
         self.routing_number = routing_number
@@ -12,9 +14,10 @@ class Account:
         self.status = status
         self.fk_person_id = fk_person_id
         self.fk_bank_id = fk_bank_id
+        self.bank_name = bank_name
 
     def to_json(self) -> dict[str, str | float | int]:
-        return {
+        result = {
             "account_id": self.account_id,
             "account_number": self.account_number,
             "routing_number": self.routing_number,
@@ -24,33 +27,44 @@ class Account:
             "fk_person_id": self.fk_person_id,
             "fk_bank_id": self.fk_bank_id
         }
-    
-    def __repr__(self) -> str:
-        return f"Account(account_id={self.account_id}, account_number={self.account_number}, routing_number={self.routing_number}, account_type={self.account_type}, balance={self.balance}, status={self.status}, fk_person_id={self.fk_person_id}, fk_bank_id={self.fk_bank_id})"
+        if self.bank_name:
+            result["bank_name"] = self.bank_name
+        return result
 
+    def __repr__(self) -> str:
+        return (
+            f"Account(account_id={self.account_id}, account_number={self.account_number}, "
+            f"routing_number={self.routing_number}, account_type={self.account_type}, "
+            f"balance={self.balance}, status={self.status}, fk_person_id={self.fk_person_id}, "
+            f"fk_bank_id={self.fk_bank_id}, bank_name={self.bank_name})"
+        )
+
+#Swapped functions from get_account_query to get_paginated_account_query to work with pagination and sorting
 @app.route("/accounts", methods=["GET"])
 def get_accounts() -> tuple[Response, int]:
     """
-    Handles GET requests to retrieve account information based on provided parameters    
+    Handles GET requests to retrieve account information with pagination, filtering, and sorting
     """
     cursor = conn.cursor()
 
-    first_name = request.args.get("first_name")
-    last_name = request.args.get("last_name")
+    fk_person_id = request.args.get("fk_person_id", type=int)
     account_type = request.args.get("account_type")
     status = request.args.get("status")
-    sort_by_balance = request.args.get("sort_by_balance")
-    page = request.args.get("page")
-    page_size = request.args.get("page_size")
+    sort_by = request.args.get("sort_by")
+    sort_order = request.args.get("sort_order", default="ASC")
+    page = request.args.get("page", default=1, type=int)
+    page_size = request.args.get("page_size", default=20, type=int)
+    limit = page_size
+    offset = (page - 1) * page_size
 
-    query, params = get_account_query(
-        first_name = first_name,
-        last_name = last_name,
-        account_type = account_type,
-        status = status,
-        sort_by_balance = bool(sort_by_balance),
-        page = int(page) if page else None,
-        page_size = int(page_size) if page_size else None
+    query, params = get_paginated_account_query(
+        fk_person_id=fk_person_id,
+        account_type=account_type,
+        status=status,
+        sort_by=sort_by,
+        sort_order=sort_order,
+        limit=limit,
+        offset=offset
     )
 
     try:
@@ -66,14 +80,13 @@ def get_accounts() -> tuple[Response, int]:
 
     cursor = conn.cursor()
     total_count = 0
-    
     try:
         cursor.execute("SELECT COUNT(*) FROM accounts")
         count_row = cursor.fetchone()
         if count_row:
             total_count = count_row[0]
     except Exception as e:
-        print(f"Error executing query: {e}")
+        print(f"Error counting accounts: {e}")
         conn.rollback()
         return jsonify([]), 500
     finally:
@@ -81,15 +94,17 @@ def get_accounts() -> tuple[Response, int]:
 
     accounts: list[Account] = []
     for row in account_rows:
+        # Adjust index mapping if SELECT changes
         accounts.append(Account(
-            row[0],
-            row[1],
-            row[2],
-            row[3],
-            row[4],
-            row[5],    
-            row[6],
-            row[7]
+            account_id=0,  
+            account_number=row[0],
+            routing_number=row[1],
+            account_type=row[2],
+            balance=row[3],
+            status=row[4],
+            fk_person_id=row[5],
+            fk_bank_id=row[6],
+            bank_name=row[7] #bank name
         ))
 
     return jsonify({

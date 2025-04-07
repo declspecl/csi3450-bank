@@ -4,62 +4,37 @@ let totalPages = 1; // This should be dynamically set based on the total number 
 
 function fetchPeople(page) {
     fetch(`http://localhost:8000/people?page=${page}&page_size=${itemsPerPage}`)
-      .then(res => {
-        if (!res.ok) throw new Error("Failed to fetch people");
-        return res.json();
-      })
-      .then(data => {
-        const container = document.getElementById('people-table-container');
-        container.innerHTML = '';
-  
-        const table = document.createElement('table');
-        const headers = ['ID', 'Name', 'Birthday', 'Email', 'Phone', 'Address', 'SSN', 'Credit Score'];
-  
-        const headerRow = document.createElement('tr');
-        headers.forEach(header => {
-          const th = document.createElement('th');
-          th.textContent = header;
-          headerRow.appendChild(th);
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to fetch people");
+            return res.json();
+        })
+        .then(data => {
+            renderPeopleTable(data.people); // 🧼 Clean and separate!
+
+            if (data.total_count !== undefined) {
+                totalPages = Math.ceil(data.total_count / itemsPerPage);
+                renderPagination(); // Call pagination renderer here
+            }
+        })
+        .catch(err => {
+            const container = document.getElementById('people-table-container');
+            container.innerHTML = `<p style="color:red;">Error loading people: ${err.message}</p>`;
         });
-        table.appendChild(headerRow);
-  
-        data.people.forEach(person => {
-          const row = document.createElement('tr');
-          const fullName = `${person.first_name} ${person.last_name}`;
-          const cells = [
-            person.person_id,
-            fullName,
-            person.birthday,
-            person.email,
-            person.phone_number,
-            person.address,
-            person.ssn,
-            person.credit_score
-          ];
-  
-          cells.forEach(value => {
-            const td = document.createElement('td');
-            td.textContent = value;
-            row.appendChild(td);
-          });
-  
-          table.appendChild(row);
-        });
-  
-        container.appendChild(table);
-  
-        // Setting totalPages based on the response from backend if it has total_count of people
-        // This is assuming your backend returns total_count in the response
-        if (data.total_count !== undefined) {
-          totalPages = Math.ceil(data.total_count / itemsPerPage);
-          renderPagination(); // Call the function to render pagination after fetching data
-        }
-      })
-      .catch(err => {
-        const container = document.getElementById('people-table-container');
-        container.innerHTML = `<p style="color:red;">Error loading people: ${err.message}</p>`;
-      });
-  }
+}
+
+
+
+// Reformatted the birthday to be more readable
+function formatBirthday(birthdayString) {
+    const date = new Date(birthdayString);
+    return date.toLocaleDateString(undefined, {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
 
 //Function to RENDER PeopleTable
 function renderPeopleTable(people) {
@@ -85,7 +60,7 @@ function renderPeopleTable(people) {
         const cells = [
             person.person_id,
             fullName,
-            person.birthday,
+            formatBirthday(person.birthday),
             person.email,
             person.phone_number,
             person.address,
