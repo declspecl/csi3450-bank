@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Loans</title>
+  <title>Loans by Person</title>
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <style>
     body {
@@ -54,7 +54,6 @@
       background-color: #fff176;
     }
 
-
     .pagination {
       margin-top: 20px;
     }
@@ -81,12 +80,10 @@
   </style>
 </head>
 <body>
-  <div style="margin-bottom: 40px;">
-    <h1>Loan Zone</h1>
-    <p>Analyze them. Filter them. Marvel at them. Welcome to the Loan Archives.</p>
-    <p>Just don’t look at Stin’s interest rate logic... it's concerning. 😬📉</p>
-    <b>He once defaulted... on his *sleep schedule* to write this.</b>
-  </div>
+  <h1>Loans by Person</h1>
+  <p>See loan info based on the person who took it out.</p>
+  <p>Made by Stin. Professional Austin impersonator. 😎</p>
+  <b>Disclaimer: May include data from people who never paid back their loans. Oops.</b>
 
   <!-- Toggle Buttons -->
   <div class="toggle-buttons">
@@ -96,10 +93,12 @@
   </div>
 
   <!-- Filter Controls -->
+  <!-- Filter Controls -->
   <div style="margin-bottom: 20px;">
     <input type="text" id="search-loan-type" placeholder="Loan Type (e.g. Auto)">
     <input type="text" id="search-loan-status" placeholder="Status (e.g. Active)">
-
+    <input type="text" id="search-person-first-name" placeholder="First Name">
+    <input type="text" id="search-person-last-name" placeholder="Last Name">
 
     <select id="interest-rate">
       <option value="">All Rates</option>
@@ -111,6 +110,7 @@
       <option value="">-- Sort By --</option>
       <option value="amount">Amount</option>
       <option value="interest_rate">Interest Rate</option>
+      <option value="credit_score">Credit Score</option>
     </select>
 
     <select id="sort-direction">
@@ -121,13 +121,8 @@
     <button id="apply-loan-filters">Apply Filters</button>
   </div>
 
-
-
-
-
   <!-- Table Container -->
-
-<div id="loans-table-container">
+  <div class="table-container">
     <table>
       <thead>
         <tr>
@@ -140,29 +135,25 @@
           <th>Interest Rate</th>
           <th>Person ID</th>
           <th>Bank ID</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Birthday</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Address</th>
+          <th>SSN</th>
+          <th>Credit Score</th>
         </tr>
       </thead>
-      <tbody id="loans-table-body">
-        <tr><td colspan="9">Loading loans...</td></tr>
-      </tbody>
+      <tbody id="loans-table-with-person-join-body"></tbody>
     </table>
   </div>
-  
 
-  <!-- Pagination Controls (just an empty div!) -->
+  <!-- Pagination Controls -->
   <div id="pagination-controls" class="pagination" style="margin-top: 20px;"></div>
 
   <a href="index.html">← Back to Home</a>
 
-  <script src="src/loans.js"></script>
+  <script src="src/loans_by_people"></script>
 </body>
-
-<b style="display:block; margin: 20px; font-size: 1.4rem; text-align: center; color: gold; text-shadow: 2px 2px 4px black; background-color: rgba(0, 0, 0, 0.7); padding: 15px; border-radius: 8px;">
-  FYI: Applying for a loan with Stin's financial record might result in a comical rejection. Proceed with humor. 😅
-</b>
-
-<a href="loans-table.html" style="display: block; font-weight: bold; font-size: 1.2rem; color: gold; text-align: center; text-shadow: 2px 2px 4px black; background-color: rgba(0, 0, 0, 0.7); text-decoration: none; margin-top: 20px;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
-  🧾 View Full Loan Dataset <span style="font-style: italic;">((Unlike Stin's credit score, this table makes sense.))</span>
-</a>
-
 </html>

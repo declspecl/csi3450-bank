@@ -7,7 +7,7 @@ CORS(app)
 
 DATABASE_NAME="bank"
 DATABASE_USER="postgres"
-DATABASE_PASSWORD="postgres"
+DATABASE_PASSWORD="Snowleopard11"
 DATABASE_HOST="localhost"
 DATABASE_PORT="5432"
 

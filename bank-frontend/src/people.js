@@ -36,6 +36,17 @@ function fetchPeople() {
     });
 }
 
+// Fixing birthday format to be more readable
+function formatBirthday(birthdayString) {
+  const date = new Date(birthdayString);
+  return date.toLocaleDateString(undefined, {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+  });
+}
+
 //function to render the people table
 function renderPeopleTable(people) {
   const container = document.getElementById('people-table-container');
@@ -59,7 +70,7 @@ function renderPeopleTable(people) {
     const cells = [
       person.person_id,
       fullName,
-      person.birthday,
+      formatBirthday(person.birthday),
       person.email,
       person.phone_number,
       person.address,

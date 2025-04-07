@@ -23,6 +23,9 @@ function fetchTransactions() {
         });
 }
 
+
+
+
 function renderTransactions(transactions) {
     const tableBody = document.getElementById("transactionTableBody");
     tableBody.innerHTML = "";
@@ -36,14 +39,24 @@ function renderTransactions(transactions) {
     
     transactions.forEach(tx => {
         const row = document.createElement("tr");
+        
+        
+        const formattedDate = new Date(tx.transaction_date).toLocaleDateString('en-US', {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    
         row.innerHTML = `
             <td>${tx.transaction_id}</td>
             <td>$${tx.amount}</td>
             <td>${tx.fk_sender_id}</td>
             <td>${tx.fk_recipient_id}</td>
             <td>${tx.status}</td>
-            <td>${tx.transaction_date}</td>
+            <td>${formattedDate}</td>
         `;
+    
         tableBody.appendChild(row);
     });
 }

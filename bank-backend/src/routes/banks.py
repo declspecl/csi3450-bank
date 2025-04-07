@@ -29,21 +29,30 @@ class Bank:
         }
 
 # The endpoint will handle GET requests to retrieve banks
+#Setting up pagination and filtering for the GET request
 @app.route("/banks", methods=["GET"])
 def get_banks() -> tuple[Response, int]:
     """
-    Handles GET requests to retrieve banks based on name and location.
+    Handles GET requests to retrieve banks with optional filters and pagination.
     """
     cursor = conn.cursor()
 
     name = request.args.get("name")
     location = request.args.get("location")
-
-    print(f"Got request to /banks with params: name={name}, location={location}")
+    sort_by = request.args.get("sort_by", default="name")  
+    sort_order = request.args.get("sort_order", default="asc")
+    page = request.args.get("page", default=1, type=int)
+    page_size = request.args.get("page_size", default=15, type=int)
+    limit = page_size
+    offset = (page - 1) * page_size
 
     query, params = get_bank_query(
         name=name,
-        location=location
+        location=location,
+        limit=limit,
+        offset=offset,
+        sort_by=sort_by,           
+        sort_order=sort_order  
     )
 
     try:
@@ -57,6 +66,31 @@ def get_banks() -> tuple[Response, int]:
     finally:
         cursor.close()
 
+    # Re-open cursor to count total rows
+    cursor = conn.cursor()
+    total_count = 0
+    try:
+        count_query = "SELECT COUNT(*) FROM banks WHERE 1=1"
+        count_params: list[str] = []
+
+        if name:
+            count_query += " AND name ILIKE %s"
+            count_params.append(f"%{name}%")
+        if location:
+            count_query += " AND location ILIKE %s"
+            count_params.append(f"%{location}%")
+
+        cursor.execute(count_query, tuple(count_params))
+        count_row = cursor.fetchone()
+        if count_row:
+            total_count = count_row[0]
+    except Exception as e:
+        print(f"Error counting banks: {e}")
+        conn.rollback()
+        return jsonify({"error": "Failed to count banks"}), 500
+    finally:
+        cursor.close()
+
     banks: list[Bank] = []
     for bank_row in bank_rows:
         banks.append(Bank(
@@ -67,7 +101,11 @@ def get_banks() -> tuple[Response, int]:
             bank_row[4]
         ))
 
-    return jsonify({ "banks": [bank.to_json() for bank in banks] }), 200
+    return jsonify({
+        "banks": [bank.to_json() for bank in banks],
+        "total_count": total_count
+    }), 200
+
 
 # The endpoint will handle POST requests to insert a new bank
 @app.route("/banks", methods=["POST"])
